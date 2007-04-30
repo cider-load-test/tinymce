@@ -1,25 +1,25 @@
 <?php
 /*
  * Filename:       assets/plugins/tinymce/lang/persian.inc.php
- * Function:       Persian/Farsi language file for TinyMCE
- * Encoding:       ISO-Latin-1
+ * Function:       Persian language file for TinyMCE By: Mohsen (MotSmart ~ www.modxcms.ir)
+ * Encoding:       UTF-8
  * Author:         Jeff Whitfield
- * Date:           2007/01/06
- * Version:        2.0.9
- * MODx version:   0.9.5
+ * Date:           2007/04/09
+ * Version:        2.1.0
+ * MODx version:   0.9.6
 */
 
-$_lang['tinymce_editor_theme_title'] = "Theme:";
-$_lang['tinymce_editor_theme_message'] = "Here you can select which theme or skin to use with the editor.";
-$_lang['tinymce_editor_custom_plugins_title'] = "Custom Plugins:";
-$_lang['tinymce_editor_custom_plugins_message'] = "Enter the plugins to use for the 'custom' theme as a comma separated list.";
-$_lang['tinymce_editor_custom_buttons_title'] = "Custom Buttons:";
-$_lang['tinymce_editor_custom_buttons_message'] = "Enter the buttons to use for the 'custom' theme as a comma separated list for each row. Be sure that each button has the required plugin enabled in the 'Custom Plugins' setting.";
-$_lang['tinymce_editor_css_selectors_title'] = "CSS selectors:";
-$_lang['tinymce_editor_css_selectors_message'] = "Here you can enter a list of selectors that should be available in the editor. Enter them as follows:<br />'displayName=selectorName;displayName2=selectorName2'<br />For instance, say you have <b>.mono</b> and <b>.smallText</b> selectors in your CSS file, you could add them here as:<br />'Monospaced text=mono;Small text=smallText'<br />Note that the last entry should not have a semi-colon after it.";
-$_lang['tinymce_settings'] = "TinyMCE Settings";
-$_lang['tinymce_theme_simple'] = "Simple";
-$_lang['tinymce_theme_advanced'] = "Advanced";
-$_lang['tinymce_theme_editor'] = "Content Editor";
-$_lang['tinymce_theme_custom'] = "Custom";
+$_lang['tinymce_editor_theme_title'] = "پوسته:";
+$_lang['tinymce_editor_theme_message'] = "در اینجا میتوانید پوسته ی مورد نظر را برای ویرایشگر انتخاب کنید.";
+$_lang['tinymce_editor_custom_plugins_title'] = "پلاگینهای مخصوص:";
+$_lang['tinymce_editor_custom_plugins_message'] = "پلاگینهای مورد نظر را در لیستی که با کاما از همدیگر جدا شده برای استفاده در پوسته ی مخصوص وارد کنید.";
+$_lang['tinymce_editor_custom_buttons_title'] = "دکمه مخصوص:";
+$_lang['tinymce_editor_custom_buttons_message'] = "برای پوسته ی مخصوص دکمه ها را به صورت فهرستی که با کاما از هم در ستون جدا شده وارد کنید. از این مسئله اطمینان حاصل کنید که هر کلید پلاگین لازم خود را در تنظیمات  پلاگینهای مخصوص فراهم دارد.";
+$_lang['tinymce_editor_css_selectors_title'] = "انتخابگرهای CSS:";
+$_lang['tinymce_editor_css_selectors_message'] = "در اینجا شما میتوانید فهرستی از انتخابگرها را که بایستی در ویرایشگر موجود باشد را وارد کنید. آنها را اینگونه وارد کنید:<br />'displayName=selectorName;displayName2=selectorName2'<br />به نحو دیگر, فرض کنید که <b>.mono</b> و <b>.smallText</b> را در انتخابگرهای فایل CSS خود دارید, شما میتوانید آنها را در اینجا با این عنوان وارد کنید:<br />'Monospaced text=mono;Small text=smallText'<br />توجه که در انتخای متن آخر نباید سمی-کالن یا نقطه کاما باشد.";
+$_lang['tinymce_settings'] = "تنظیمات TinyMCE";
+$_lang['tinymce_theme_simple'] = "ساده";
+$_lang['tinymce_theme_advanced'] = "پیشرفته";
+$_lang['tinymce_theme_editor'] = "ویرایشگر متن";
+$_lang['tinymce_theme_custom'] = "مخصوص";
 ?>

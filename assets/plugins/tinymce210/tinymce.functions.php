@@ -5,6 +5,11 @@ if (!function_exists('getTinyMCESettings')) {
 		// language settings
 		include_once($path.'/lang/'.$manager_language.'.inc.php');
 		
+		// Check for previous 'full' theme setting for backwards compatibility 
+		if($theme == "full"){
+		    $theme == "editor";
+		}
+		
 		$arrThemes[] = array("simple",$_lang['tinymce_theme_simple']);
 		$arrThemes[] = array("advanced",$_lang['tinymce_theme_advanced']);
 		$arrThemes[] = array("editor",$_lang['tinymce_theme_editor']);
@@ -81,9 +86,9 @@ TINYMCE_HTML;
 
 // getTinyMCEScript function
 if (!function_exists('getTinyMCEScript')) {
-	function getTinyMCEScript($elmList, $theme='simple', $width, $height, $language='en', $frontend, $base_url, $plugins, $buttons1, $buttons2, $buttons3, $buttons4, $disabledButtons, $blockFormats, $entity_encoding, $entities, $pathoptions, $cleanup, $resizing, $css_path, $css_selectors, $use_browser, $toolbar_align, $advimage_styles, $advlink_styles) {
+	function getTinyMCEScript($elmList, $theme='simple', $width, $height, $language='en', $frontend, $base_url, $plugins, $buttons1, $buttons2, $buttons3, $buttons4, $disabledButtons, $blockFormats, $entity_encoding, $entities, $pathoptions, $cleanup, $resizing, $css_path, $css_selectors, $use_browser, $toolbar_align, $advimage_styles, $advlink_styles, $linklist) {
 		// Set theme
-		if($theme == "editor" || $theme == "custom"){
+		if($theme == "editor" || $theme == "custom" || $theme == "full"){
 			$tinyTheme = "advanced";
 			if(($theme == "editor" || $theme == "full") || ($theme == "custom" && (empty($plugins) || empty($buttons1)))){
 				$blockFormats = "p,h1,h2,h3,h4,h5,h6,div,blockquote,code,pre,address";
@@ -150,7 +155,7 @@ if (!function_exists('getTinyMCEScript')) {
 		// Advanced options		
 		if($theme == "editor" || $theme == "custom"){
 			if($frontend=='false'){
-				$tinymceInit .= "		  external_link_list_url : \"".$base_url."assets/plugins/tinymce210/tinymce.linklist.php\",\n";
+				$tinymceInit .= ($linklist == 'enabled') ? "		  external_link_list_url : \"".$base_url."assets/plugins/tinymce210/tinymce.linklist.php\",\n" : "";
 				$tinymceInit .= ($use_browser==1 ? "		  resource_browser_path : \"".$base_url."manager/media/browser/mcpuk/browser.html?Connector=".$base_url."manager/media/browser/mcpuk/connectors/php/connector.php&ServerPath=".$base_url."\",\n" : "");
 				$tinymceInit .= ($use_browser==1 ? "		  file_browser_callback : \"fileBrowserCallBack\",\n":"");
 

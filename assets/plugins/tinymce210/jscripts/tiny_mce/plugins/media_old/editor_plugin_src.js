@@ -66,10 +66,8 @@ var TinyMCE_MediaPlugin = {
 			case "insert_to_editor":
 				img = tinyMCE.getParam("theme_href") + '/images/spacer.gif';
 				content = content.replace(/<script[^>]*>\s*write(Flash|ShockWave|WindowsMedia|QuickTime|RealMedia)\(\{([^\)]*)\}\);\s*<\/script>/gi, '<img class="mceItem$1" title="$2" src="' + img + '" />');
-				content = content.replace(/<!--\[if !IE\]> -->\s*<object([^>]*)>\s*<!--.*>\s*<object([^>]*)>\s*<!--\s*.*\s*<!--\s*.*\s*-->/gi, '<div class="mceItemObject" $1><div class="mceItemObjectEmbed"></div>');
 				content = content.replace(/<object([^>]*)>/gi, '<div class="mceItemObject" $1>');
 				content = content.replace(/<embed([^>]*)>/gi, '<div class="mceItemObjectEmbed" $1>');
-				content = content.replace(/<\/(object|embed)([^>]*)>\s*<!-- <!\[endif\]-->/gi, '</div>');
 				content = content.replace(/<\/(object|embed)([^>]*)>/gi, '</div>');
 				content = content.replace(/<param([^>]*)>/gi, '<div $1 class="mceItemParam"></div>');
 				content = content.replace(new RegExp('\\/ class="mceItemParam"><\\/div>', 'gi'), 'class="mceItemParam"></div>');
@@ -110,28 +108,6 @@ var TinyMCE_MediaPlugin = {
 						case 'clsid:cfcdaa03-8be4-11cf-b84b-0020afbbccfa':
 						case 'clsid:22d6f312-b0f6-11d0-94ab-0080c74c7e95':
 						case 'clsid:05589fa1-c356-11ce-bf01-00aa0055595a':
-							nl[i].parentNode.replaceChild(TinyMCE_MediaPlugin._createImg('mceItemRealMedia', d, nl[i]), nl[i]);
-							break;
-					}
-
-					switch (tinyMCE.getAttrib(nl[i], 'type')) {
-						case 'application/x-shockwave-flash':
-							nl[i].parentNode.replaceChild(TinyMCE_MediaPlugin._createImg('mceItemFlash', d, nl[i]), nl[i]);
-							break;
-
-						case 'application/x-director':
-							nl[i].parentNode.replaceChild(TinyMCE_MediaPlugin._createImg('mceItemShockWave', d, nl[i]), nl[i]);
-							break;
-
-						case 'application/x-mplayer2':
-							nl[i].parentNode.replaceChild(TinyMCE_MediaPlugin._createImg('mceItemWindowsMedia', d, nl[i]), nl[i]);
-							break;
-
-						case 'video/quicktime':
-							nl[i].parentNode.replaceChild(TinyMCE_MediaPlugin._createImg('mceItemQuickTime', d, nl[i]), nl[i]);
-							break;
-
-						case 'audio/x-pn-realaudio-plugin':
 							nl[i].parentNode.replaceChild(TinyMCE_MediaPlugin._createImg('mceItemRealMedia', d, nl[i]), nl[i]);
 							break;
 					}
@@ -375,18 +351,6 @@ var TinyMCE_MediaPlugin = {
 		p.width = at.width ? at.width : p.width;
 		p.height = at.height ? at.height : p.height;
 
-		h += '<!--[if !IE]> -->';
-		h += '<object type="'+ mt + '"';
-		h += typeof(p.src) != "undefined" ? ' data="' + p.src + '"' : '';
-		h += typeof(p.id) != "undefined" ? ' id="' + p.id + '"' : '';
-		h += typeof(p.name) != "undefined" ? ' name="' + p.name + '"' : '';
-		h += typeof(p.width) != "undefined" ? ' width="' + p.width + '"' : '';
-		h += typeof(p.height) != "undefined" ? ' height="' + p.height + '"' : '';
-		h += typeof(p.align) != "undefined" ? ' align="' + p.align + '"' : '';
-		h += '>';
-		h += '<!-- <![endif]-->';
-
-		h += '<!--[if IE]>';
 		h += '<object classid="clsid:' + cls + '" codebase="' + cb + '"';
 		h += typeof(p.id) != "undefined" ? ' id="' + p.id + '"' : '';
 		h += typeof(p.name) != "undefined" ? ' name="' + p.name + '"' : '';
@@ -394,7 +358,6 @@ var TinyMCE_MediaPlugin = {
 		h += typeof(p.height) != "undefined" ? ' height="' + p.height + '"' : '';
 		h += typeof(p.align) != "undefined" ? ' align="' + p.align + '"' : '';
 		h += '>';
-		h += '<!--><!----><!--</object>-->';
 
 		for (n in p) {
 			if (p[n] && typeof(p[n]) != "function") {
@@ -406,8 +369,18 @@ var TinyMCE_MediaPlugin = {
 			}
 		}
 
-		h += '</object>';
-		h += '<!-- <![endif]-->';
+		h += '<embed type="' + mt + '"';
+
+		for (n in p) {
+			if (typeof(p[n]) == "function")
+				continue;
+
+			// Skip url parameter for embed tag on WMP
+			if (!(n == 'url' && mt == 'application/x-mplayer2'))
+				h += ' ' + n + '="' + p[n] + '"';
+		}
+
+		h += '></embed></object>';
 
 		return h;
 	},
