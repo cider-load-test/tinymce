@@ -5,6 +5,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6-RC3 (rev 2600 - April 25, 2007)
 ====================================
+* [FS#848] META Tags and keywords now merge correctly in to the document. (2631)
 * Corrected configuration editor for tree_show_protected setting. (2596)
 * Removed upgrade note regarding logging out of manager; was causing confusion. (2596)
 * [FS#843] @INHERIT would not inherit a value of '0' (2595)
