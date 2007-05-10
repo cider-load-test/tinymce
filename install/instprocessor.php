@@ -448,7 +448,7 @@ if (isset ($_POST['plugin'])) {
 			}
 			// add system events
 			if (count($events) > 0) {
-				$ds = mysql_query("SELECT id FROM $dbase.`" . $table_prefix . "site_plugins` WHERE name='$name';", $sqlParser->conn);
+				$ds=mysql_query("SELECT id FROM $dbase.`".$table_prefix."site_plugins` WHERE name='$name' AND description='$desc';",$sqlParser->conn); 
 				if ($ds) {
 					$row = mysql_fetch_assoc($ds);
 					$id = $row["id"];
