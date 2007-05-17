@@ -5,6 +5,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6-RC3 (rev 2715 - May 15, 2007)
 ====================================
+* Update Ditto/Reflect to rev 1432 version 2.0.3 (2729)
 * Add partial Chinese UTF8 (2728)
 * New installer to better handle upgrade issues (2727)
 * Update default content to use mootools-based effects (2715)
