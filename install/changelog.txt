@@ -3,7 +3,12 @@ This file shows the changes in recent releases of MODx. The most current release
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
 
-MODx 0.9.6 (rev 2766 - May 25, 2007)
+MODx 0.9.6.1 (rev 2771 - May 25, 2007)
+====================================
+* Added Spanish installer language file. (2771)
+
+
+MODx 0.9.6 (rev 2767 - May 25, 2007)
 ====================================
 * Added German, updated French and Russian installer language files. (2766)
 * Added French and Swedish installer language files. (2762)
