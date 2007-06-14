@@ -572,7 +572,6 @@ function stripAlias($alias) {
 
 	// Convert accented characters to their non-accented counterparts. Idea originally from Brett Florio (thanks!) ... expanded list from Textpattern (double-thanks!)
 	$replace_array = array(
-        ' ' => '-',
         '&' => 'and',
         '\'' => '',
         'À' => 'A',
@@ -851,12 +850,11 @@ function stripAlias($alias) {
         'ω' => 'o',
         'ώ' => 'o',
 	);
-
     $alias = strtr($alias, $replace_array);
-
     $alias = strip_tags($alias);
     $alias = preg_replace('/&.+?;/', '', $alias); // kill entities
     $alias = preg_replace('/[^\.%A-Za-z0-9 _-]/', '', $alias);
+    $alias = preg_replace('/\s+/', '-', $alias);
     $alias = preg_replace('|-+|', '-', $alias);
     $alias = trim($alias, '-');
     return $alias;
