@@ -6,8 +6,8 @@
  * @package MODx
  * @version 1.0
  *
- * Filename:       /install/lang/english/english.inc.php
- * Language:       English
+ * Filename:       /install/lang/spanish/spanish.inc.php
+ * Language:       Spanish
  * Encoding:       iso-8859-1
  */
 
