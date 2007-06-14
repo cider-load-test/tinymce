@@ -3,8 +3,9 @@ This file shows the changes in recent releases of MODx. The most current release
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
 
-MODx 0.9.6.1 (rev 2772 - May 28, 2007)
+MODx 0.9.6.1 (rev 2781 - June 14, 2007)
 ====================================
+* [FS#865] Fix to prevent registered scripts from being duplicated when registered by non-cacheable snippets in cacheable documents. (2781)
 * [FS#877] Implemented MODX_API_MODE constant to allow inclusion of index.php for access to $modx API without executing the parser. (2772)
 * Added Spanish installer language file. (2771)
 
