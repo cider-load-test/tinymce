@@ -5,6 +5,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.1 (rev 2783 - June 14, 2007)
 ====================================
+* [FS#896] Document (Un)Publishing during "Clear Cache" now accurately (Un)Publishes documents. (2786)
 * [FS#894] Checking table_prefix failed during installation. (2782)
 * [FS#874] Alias not saved if char-encoding set other then UTF-8 (bug in save_content.processor.php). (2776,2782,2783)
 * [FS#865] Fix to prevent registered scripts from being duplicated when registered by non-cacheable snippets in cacheable documents. (2781)
