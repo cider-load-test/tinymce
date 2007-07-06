@@ -1936,6 +1936,26 @@ class DocumentParser {
         $this->placeholders[$name]= $value;
     }
 
+    # set arrays or object vars as placeholders
+    function toPlaceholders($subject, $prefix= '') {
+        if (is_object($subject)) {
+            $subject= get_object_vars($subject);
+        }
+        if (is_array($subject)) {
+            foreach ($subject as $key => $value) {
+                $this->toPlaceholder($key, $value, $prefix);
+            }
+        }
+    }
+    
+    function toPlaceholder($key, $value, $prefix= '') {
+        if (is_array($value) || is_object($value)) {
+            $this->toPlaceholders($value, "{$prefix}{$key}.");
+        } else {
+            $this->setPlaceholder("{$prefix}{$key}", $value);
+        }
+    }
+
     # returns the virtual relative path to the manager folder
     function getManagerPath() {
         global $base_url;
