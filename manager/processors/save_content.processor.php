@@ -897,4 +897,5 @@ function saveMETAKeywords($id) {
 		$modx->db->update($flds, $tbl, "id='$id'");
 	}
 }
+
 ?>
