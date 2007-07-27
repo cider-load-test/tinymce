@@ -3,8 +3,12 @@ This file shows the changes in recent releases of MODx. The most current release
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
 
-MODx 0.9.6.1 (rev 2803 - July 06, 2007)
+MODx 0.9.6.1 (rev 2853 - July 26, 2007)
 ====================================
+* [FS#877] Removed exit() from index.php that prevented MODX_API_MODE usage. (2853)
+* [FS#922] Duplicate Content Processor now honors a user's ability to publish documents. (2836)
+* [FS#921] Changed the way a few TVs are rendered, they no longer escape strings. (2812)
+* [FS#920] Manager menu now shows only active modules the user can execute ('disabled' modules are hidden). (2811)
 * Added two new API methods to the MODx DocumentParser class: $modx->toPlaceholder(string $key, mixed $value, string $prefix= '') and $modx->toPlaceholders(array|object $subject, string prefix= ''). (2803)
 * [FS#896] Document (Un)Publishing during "Clear Cache" now accurately (Un)Publishes documents. (2786)
 * [FS#894] Checking table_prefix failed during installation. (2782)
