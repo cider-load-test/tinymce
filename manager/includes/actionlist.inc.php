@@ -79,7 +79,7 @@ function getAction($lastaction, $itemid='') {
 		case "73" : return "Editing a weblink"; break;
 		//case "74" : return "Changing personal preferences"; break;
 		case "75" : return "User/ role management"; break;
-		case "76" : return "Reource management"; break;
+		case "76" : return "Resource management"; break;
 		case "77" : return "Creating a new Chunk (HTML Snippet)"; break;
 		case "78" : return "Editing Chunk (HTML Snippet) $itemid"; break;
 		case "79" : return "Saving Chunk (HTML Snippet) $itemid"; break;
