@@ -3,8 +3,9 @@ This file shows the changes in recent releases of MODx. The most current release
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
 
-MODx 0.9.6.1 (rev 2853 - July 26, 2007)
+MODx 0.9.6.1 (rev 2987 - October 5, 2007)
 ====================================
+* [FS#929] weblogin error in SQL statement for active_users in STRICT sql_mode. (2987)
 * [FS#877] Removed exit() from index.php that prevented MODX_API_MODE usage. (2853)
 * [FS#922] Duplicate Content Processor now honors a user's ability to publish documents. (2836)
 * [FS#921] Changed the way a few TVs are rendered, they no longer escape strings. (2812)
