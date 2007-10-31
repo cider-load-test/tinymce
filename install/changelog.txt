@@ -3,7 +3,7 @@ This file shows the changes in recent releases of MODx. The most current release
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
 
-MODx 0.9.6.1 (rev 3056 - October 23, 2007)
+MODx 0.9.6.1 (rev 3078 - October 31, 2007)
 ====================================
 * [FS#773] WebLogin doesn't return to previous URL after 401. (3056)
 * [FS#929] weblogin error in SQL statement for active_users in STRICT sql_mode. (2987)
