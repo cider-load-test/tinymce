@@ -2,6 +2,25 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
+MODx 0.9.6.2 (rev 3120)
+====================================
+* Many Optimizations all over, double quoted many HTML attributes, not XHTML, but it's a start ;)
+* Added 'Role' column to manager user table page
+* Rewrote display and optimized queries for (web_)access_permissions pages
+* Fixed user theme bug (manager theme would always reset)
+* Added File Manager Upload Tracking, with hack to prevent double logging.
+* Cleaned up saveUserSettings() function and added ability to skip common settings in system_settings table
+* Updated @INHERIT TV command to see through un-published pages.
+* English Language Key updates:
+    - access_permissions_links_tab
+    - access_permissions_off
+    - access_permissions_users_in_group (added)
+    - access_permissions_user_group (removed, no longer used)
+    - access_permissions_user_group_access (removed, no longer used)
+    - role (added)
+    - web_access_permissions_user_group (removed, no longer used)
+    - web_access_permissions_user_group_access (removed, no longer used)
+* Moved actions list out of switch() statement and into $GLOBALS['action_list']
 
 MODx 0.9.6.1 (rev 3078 - October 31, 2007)
 ====================================

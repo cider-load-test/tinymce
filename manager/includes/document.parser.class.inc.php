@@ -1884,19 +1884,16 @@ class DocumentParser {
             if ($result == false)
                 return false;
             else {
-                $baspath= $this->config["base_path"] . "manager/includes";
-                include_once $baspath . "/tmplvars.format.inc.php";
-                include_once $baspath . "/tmplvars.commands.inc.php";
-                for ($i= 0; $i < count($result); $i++) {
-                    $row= $result[$i];
-                    // to-do needs fixing when getting tvs from other pages
-                    $replace_richtext= "";
-                    $richtexteditor= "";
-                    $w= "100%";
-                    $h= "300";
-                    $output[$row['name']]= getTVDisplayFormat($row['name'], $row['value'], $row['display'], $row['display_params'], $row['type'], $docid);
-                }
-                return $output;
+		$baspath= $this->config["base_path"] . "manager/includes";
+		include_once $baspath . "/tmplvars.format.inc.php";
+		include_once $baspath . "/tmplvars.commands.inc.php";
+		for ($i= 0; $i < count($result); $i++) {
+			$row= $result[$i];
+			if (!$row['id'])
+				$output[$row['name']]= $row['value'];
+			else	$output[$row['name']]= getTVDisplayFormat($row['name'], $row['value'], $row['display'], $row['display_params'], $row['type'], $docid);
+		}
+		return $output;
             }
         }
     }
