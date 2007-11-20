@@ -141,11 +141,11 @@ function deletedocument() {
 	  </tr>
 	  <tr>
 	    <td align="left"><?php echo $_lang['template_name']; ?>:&nbsp;&nbsp;</td>
-	    <td align="left"><input name="templatename" type="text" maxlength="100" value="<?php echo html_entity_decode($content['templatename']);?>" class="inputBox" style="width:150px;" onChange='documentDirty=true;'><span class="warning" id='savingMessage'></span></td>
+	    <td align="left"><input name="templatename" type="text" maxlength="100" value="<?php echo htmlspecialchars($content['templatename']);?>" class="inputBox" style="width:150px;" onChange='documentDirty=true;'><span class="warning" id='savingMessage'></span></td>
 	  </tr>
 	    <tr>
 	    <td align="left"><?php echo $_lang['template_desc']; ?>:&nbsp;&nbsp;</td>
-	    <td align="left"><input name="description" type="text" maxlength="255" value="<?php echo html_entity_decode($content['description']);?>" class="inputBox" style="width:300px;" onChange='documentDirty=true;'></td>
+	    <td align="left"><input name="description" type="text" maxlength="255" value="<?php echo htmlspecialchars($content['description']);?>" class="inputBox" style="width:300px;" onChange='documentDirty=true;'></td>
 	  </tr>
 	  <tr>
 		<td align="left"><?php echo $_lang['existing_category']; ?>:&nbsp;&nbsp;</td>

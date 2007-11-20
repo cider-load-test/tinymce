@@ -148,7 +148,7 @@ if (is_array($evtOut))
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td align="left"><?php echo $_lang['htmlsnippet_name']; ?>:</td>
-    <td align="left"><span style="font-family:'Courier New', Courier, mono">{{</span><input name="name" type="text" maxlength="100" value="<?php echo $content['name'];?>" class="inputBox" style="width:140px;" onChange='documentDirty=true;'><span style="font-family:'Courier New', Courier, mono">}}</span><span class="warning" id='savingMessage'>&nbsp;</span></td>
+    <td align="left"><span style="font-family:'Courier New', Courier, mono">{{</span><input name="name" type="text" maxlength="100" value="<?php echo htmlspecialchars($content['name']);?>" class="inputBox" style="width:140px;" onChange='documentDirty=true;'><span style="font-family:'Courier New', Courier, mono">}}</span><span class="warning" id='savingMessage'>&nbsp;</span></td>
   </tr>
   <tr>
     <td align="left"><?php echo $_lang['htmlsnippet_desc']; ?>:&nbsp;&nbsp;</td>
