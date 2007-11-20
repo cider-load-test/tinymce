@@ -2272,7 +2272,6 @@ class DocumentParser {
             for ($i= 0; $i < $numEvents; $i++) { // start for loop
                 $pluginName= $el[$i];
                 $pluginName = stripslashes($pluginName);
-                echo $pluginName;
                 // reset event object
                 $e= & $this->Event;
                 $e->_resetEventObject();
