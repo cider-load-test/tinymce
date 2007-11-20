@@ -201,7 +201,7 @@ class synccache{
 			$events[$evt['evtname']][] = $evt['name'];
 		}
 		foreach($events as $evtname => $pluginnames) {
-			$tmpPHP .= '$e[\''.$evtname.'\'] = array(\''.implode("','",$pluginnames)."');\n";
+			$tmpPHP .= '$e[\''.$evtname.'\'] = array(\''.implode("','",$this->escapeSingleQuotes($pluginnames))."');\n";
 		}
 		
 		// close and write the file
