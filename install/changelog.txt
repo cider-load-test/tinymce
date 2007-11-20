@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2 (rev 3156)
+MODx 0.9.6.2 (rev 3157)
 ====================================
+* [FS#946] Fix the message counts on the Manager welcome page (3157)
 * [FS#972] Fix issue with recurring refresh when settings are being saved in Safari 3 (3156)
 * Many Optimizations all over, double quoted many HTML attributes, not XHTML, but it's a start ;)
 * Added 'Role' column to manager user table page
