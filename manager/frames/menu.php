@@ -133,6 +133,9 @@ if(IN_MANAGER_MODE!="true") die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please
             x=window.setTimeout('reloadmenu()',500);
             y=window.setTimeout('reloadtree()',500);
         }
+        if(rFrame==10) {
+			window.top.location.href = "../manager";
+		}
     }
 
     // GENERAL FUNCTIONS - Work
