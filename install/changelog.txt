@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2 (rev 3167)
+MODx 0.9.6.2 (rev 3170)
 ====================================
+* [FS#940] Only add count suffix to auto-generated alias if duplicate aliases setting isn't enabled (3170)
 * [FS#915] Small fix to checkPublishStatus() in document.parser.inc.php (3167)
 * [FS#934] Fix use of join() in getDocuments() API function (3163)
 * [FS#929] Additional fix for weblogin error in SQL statement for active_users in STRICT sql_mode. (3162)
