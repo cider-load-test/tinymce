@@ -2,8 +2,10 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2 (rev 3172)
+MODx 0.9.6.2 (rev 3243)
 ====================================
+* [Trac#52] TVs in QuickEdit now ordered by rank, then by name
+* [FS#984] Added labels to "After saving:" radio buttons in Manager when editing Templates, Template Variables, Chunks, Snippets and Plugins
 * [FS#844] Small fix to BottomButtonBar plugin related to language strings (3171)
 * [FS#940] Only add count suffix to auto-generated alias if duplicate aliases setting isn't enabled (3170)
 * [FS#915] Small fix to checkPublishStatus() in document.parser.inc.php (3167)
@@ -31,7 +33,6 @@ MODx 0.9.6.2 (rev 3172)
     - web_access_permissions_user_group (removed, no longer used)
     - web_access_permissions_user_group_access (removed, no longer used)
 * Moved actions list out of switch() statement and into $GLOBALS['action_list']
-* [FS#984] Added labels to "After saving:" radio buttons in Manager when editing Templates, Template Variables, Chunks, Snippets and Plugins
 
 MODx 0.9.6.1 (rev 3078 - October 31, 2007)
 ====================================
