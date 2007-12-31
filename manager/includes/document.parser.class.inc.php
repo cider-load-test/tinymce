@@ -2238,12 +2238,11 @@ class DocumentParser {
 
     # add an event listner to a plugin - only for use within the current execution cycle
     function addEventListener($evtName, $pluginName) {
-        if (!$evtName || !$pluginName)
-            return false;
-        $el= $this->pluginEvent[$evtName];
-        if (empty ($el))
-            $el= $this->pluginEvent[$evtName]= array ();
-        return array_push($el, $pluginName); // return index
+	    if (!$evtName || !$pluginName)
+		    return false;
+	    if (!array_key_exists($this->pluginEvent[$evtName]))
+		    $this->pluginEvent[$evtName] = array();
+	    return array_push($this->pluginEvent[$evtName], $pluginName); // return array count
     }
 
     # remove event listner - only for use within the current execution cycle
