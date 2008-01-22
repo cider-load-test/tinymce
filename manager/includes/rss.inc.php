@@ -22,8 +22,8 @@
 ---------------------------------------------- */
 // Here you can set the urls to retrieve the RSS from. Simply add a $urls line following the numbering progress in the square brakets.
 
-$urls['modx_news_content'] ="http://feeds.feedburner.com/modxsecurity";
-$urls['modx_security_notices_content'] = "http://modxcms.com/forums/index.php?sa=recent;type=rss;action=.xml&limit=10;board=1";
+$urls['modx_news_content'] ="http://modxcms.com/forums/index.php?sa=recent;type=rss;action=.xml&limit=10;board=1";
+$urls['modx_security_notices_content'] = "http://feeds.feedburner.com/modxsecurity";
 
 // How many items per Feed?
 $itemsNumber = '10';
