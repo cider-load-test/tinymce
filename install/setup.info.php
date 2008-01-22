@@ -3,7 +3,7 @@
 #:::::::::::::::::::::::::::::::::::::::::
 
 	$moduleName = "MODx";
-	$moduleVersion = " 0.9.6.1";
+	$moduleVersion = " 0.9.6.2";
 	$moduleSQLBaseFile = "setup.sql";
 	$moduleSQLDataFile = "setup.data.sql";
 	$moduleSQLUpdateFile = "setup.updates.sql";
@@ -43,6 +43,7 @@
 	# setup modules - array : name, description, type - 0:file or 1:content, file or content,properties, guid,enable_sharedparams
 	$mm = &$moduleModules;
 	$mm[] = array("Doc Manager","Quickly perform bulk updates to the Documents in your site including templates, publishing details, and permissions.",0,"$setupPath/module.docmanager.tpl","","",1);
+	$mm[] = array("kRSS","Adds RSS feeds of the Security and Announcements thread directly to your Manager.",0,"$setupPath/module.krss.tpl","","",1);
 	$mm[] = array("QuickEdit","Renders QuickEdit links in the frontend",0,"$setupPath/quickedit.module.tpl","&mod_path=Module Path (from site root);string;assets/modules/quick_edit &show_manager_link=Show Manager Link;int;1 &show_help_link=Show Help Link;int;1 &editable=Editable Fields;string;pagetitle,longtitle,description,content,alias,introtext,menutitle,published,hidemenu,menuindex,searchable,cacheable,template","f888bac76e1537ca8e0cbec772b4624a",1);
 
 	# setup callback function
