@@ -4,6 +4,12 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.2 (rev 3278)
 ====================================
+* [FS#998] Update ListIndexer version included in the distribution (3302)
+* [FS#996] Update installer to detect register_globals being on during installation (3301)
+* Added RSS feeds of Security and Announcements forums messages to manager welcome page with required English language file additions in installer. (3295, 3296, 3298, 3299, 3300)
+* Migrated Mootools to 1.11 (3293, 3294)
+* Fix for tree menu scrolling (credit smashingred ... thanks!). See http://modxcms.com/forums/index.php/topic,21735.msg134298.html#msg134298 (3292)
+* Fix htcmime.php and local file inclusion vulnerabilities for certain server configs, reported at http://www.securityfocus.com/archive/1/485707/30/0/threaded (3279, 3280)
 * [FS#991] addEventListener now works directly on the event array (3278)
 * [FS#986] Removed hidden input box in manager menu, cleaned up whitespace, organized source file (3278)
 * [FS#981] Moved "Page Source" section to a tab in document data viewer, cleaned and organized source file (3278)
