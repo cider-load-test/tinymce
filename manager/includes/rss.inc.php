@@ -66,12 +66,13 @@ foreach ($urls as $section=>$url) {
     foreach ($items as $item) {
         $href = $item['link'];
         $title = $item['title'];
+        $pubdate = $item['pubdate'];
         $description = strip_tags($item['description']);
         if (strlen($description) > 199) {
             $description = substr($description, 0, 200);
             $description .= '...<br />Read <a href="'.$href.'">more</a>.';
         }
-        $output .= '<li><a href="'.$href.'">'.$title.'</a><br />'.$description.'</li>';
+        $output .= '<li><a href="'.$href.'">'.$title.'</a> - <b>'.$pubdate.'</b><br />'.$description.'</li>';
     }
 
     #$output .= '</ul></div>';
