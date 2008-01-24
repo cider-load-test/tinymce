@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2 (rev 3314)
+MODx 0.9.6.2 (rev 3317)
 ====================================
+* Updated rss.inc.php to handle 404 errors if the feeds cannot be found (3317)
 * [FS#947] Module permissions did not handle multiple user groups (3314)
 * [FS#977] Updated handling for apostrophes in Full Name (user/web user) and resource categories (3309)
     - Removed redundant mysql_escape_string() from the (web)users and Resources save processors 

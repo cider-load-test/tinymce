@@ -55,7 +55,11 @@ $feedData = array(); // pixelchutes
 // create Feed
 foreach ($urls as $section=>$url) {
 	$output = '';
-    $rss = fetch_rss($url);
+    $rss = @fetch_rss($url);
+    if( !$rss ){
+    	$feedData[$section] = 'Failed to retrieve ' . $url;
+    	continue;
+	}
     #$output .= '<div class="sectionHeader">';
     #$output .= '<img src="media/style/MODx/images/misc/dot.gif" alt="" />&nbsp;'.$rss->channel['title'];
     #$output .= '</div>';
