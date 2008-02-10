@@ -49,8 +49,8 @@ if(isset($_REQUEST['searched']) && isset($_REQUEST['highlight'])) {
 
   $highlightText = $termText;
 
-  $searched = htmlspecialchars(urldecode($_REQUEST['searched'])); // pixelchutes
-  $highlight = htmlspecialchars(urldecode($_REQUEST['highlight'])); // pixelchutes
+  $searched = strip_tags(urldecode($_REQUEST['searched'])); // pixelchutes
+  $highlight = strip_tags(urldecode($_REQUEST['highlight'])); // pixelchutes
   $output = $modx->documentOutput; // get the parsed document
 
   $body = explode("<body>", $output); // break out the head
