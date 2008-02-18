@@ -4,9 +4,9 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.2 (rev 3359)
 ====================================
+* Update ajaxSearch to 1.7.0.2 and Search Highlighting plugin to 1.2.0.2 (3386,3387)
 * Update Ditto/Reflect to version 2.1 (3377)
 * [FS#988] Changed htmlspecialchars() on Search Highlighting plugin to strip_tags() (3359)
-* Fix demo content error with web signup (see http://modxcms.com/forums/index.php/topic,22374.msg137890.html)
 * Fix demo content error with web signup (see http://modxcms.com/forums/index.php/topic,22374.msg137890.html)
 * Update IE6 (and earlier) helper files for transparent png support and for adding :hover, :active, :focus support to all elements (not just links/inputs)
 * [FS#905] sqlParser.class.php now typecasting (float) instead of floatval() [PHP < 4.2] (3338)

@@ -1,11 +1,9 @@
 /*
   ------------------------------------------------------------------------
-  Plugin: Search_Highlight v1.3
+  Plugin: Search_Highlight v1.2.0.2
   ------------------------------------------------------------------------
   Changes:
-  1/23/2008 - Running htmlspecialchars() against parameters to prevent XSS injection (pixelchutes)
-            - Updated $_GET to $_REQUEST to allow search highlighting via form POST (pixelchutes)
-
+  10/02/08 - Strip_tags added to avoid sql injection and XSS. Use of $_REQUEST 
   01/03/07 - Added fies/updates from forum from users mikkelwe/identity
   (better highlight replacement, additional div around term/removal message)
   ------------------------------------------------------------------------
@@ -49,8 +47,8 @@ if(isset($_REQUEST['searched']) && isset($_REQUEST['highlight'])) {
 
   $highlightText = $termText;
 
-  $searched = strip_tags(urldecode($_REQUEST['searched'])); // pixelchutes
-  $highlight = strip_tags(urldecode($_REQUEST['highlight'])); // pixelchutes
+  $searched = strip_tags(urldecode($_REQUEST['searched']));
+  $highlight = strip_tags(urldecode($_REQUEST['highlight']));
   $output = $modx->documentOutput; // get the parsed document
 
   $body = explode("<body>", $output); // break out the head
