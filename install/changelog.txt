@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2 (rev 3401)
+MODx 0.9.6.2 (rev 3402)
 ====================================
+* Fix to prevent JS warning in FF with QuickEdit (3402)
 * Fix installer to use multi-language based images (3401)
 * Added Japanese translation/images to the installer (3400)
 * Allow weblinks to have summary(introtext) fields (3390)
