@@ -39,13 +39,16 @@ $donthit = intval($_POST['donthit']);
 $menutitle = mysql_escape_string($_POST['menutitle']);
 $hidemenu = intval($_POST['hidemenu']);
 
-// Get Table names
-$tblsc = $modx->getFullTableName('site_content');
-$tbldg = $modx->getFullTableName('document_groups');
-$tbltv = $modx->getFullTableName('site_tmplvars');
-$tbltvt = $modx->getFullTableName('site_tmplvar_templates');
-$tbltvc = $modx->getFullTableName('site_tmplvar_contentvalues');
-$tbltva = $modx->getFullTableName('site_tmplvar_access');
+// Get table names (alphabetical)
+$tbl_document_groups            = $modx->getFullTableName('document_groups');
+$tbl_documentgroup_names        = $modx->getFullTableName('documentgroup_names');
+$tbl_keyword_xref               = $modx->getFullTableName('keyword_xref');
+$tbl_site_content               = $modx->getFullTableName('site_content');
+$tbl_site_content_metatags      = $modx->getFullTableName('site_content_metatags');
+$tbl_site_tmplvar_access        = $modx->getFullTableName('site_tmplvar_access');
+$tbl_site_tmplvar_contentvalues = $modx->getFullTableName('site_tmplvar_contentvalues');
+$tbl_site_tmplvar_templates     = $modx->getFullTableName('site_tmplvar_templates');
+$tbl_site_tmplvars              = $modx->getFullTableName('site_tmplvars');
 
 if (trim($pagetitle == "")) {
 	if ($type == "reference") {
@@ -67,7 +70,7 @@ if ($friendly_urls) {
 		$alias = strtolower(stripAlias(trim($pagetitle)));
 		if(!$allow_duplicate_alias){
 			// check if alias already exists. if yes then append $cnt to alias
-			$cnt = $modx->db->getValue("SELECT count(*) FROM " . $modx->getFullTableName("site_content") . " WHERE id<>'$id' AND alias='$alias'");
+			$cnt = $modx->db->getValue("SELECT count(*) FROM " . $tbl_site_content . " WHERE id<>'$id' AND alias='$alias'");
 			if ($cnt > 0)
 				$alias .= $cnt;
 		}
@@ -78,9 +81,9 @@ if ($friendly_urls) {
 		$alias = stripAlias($alias);
 		if ($use_alias_path) {
 			// Only check for duplicates on the same level if alias_path is on (netnoise 2006/08/14)
-			$docid = $modx->db->getValue("SELECT id FROM " . $tblsc . " WHERE id<>'$id' AND alias='$alias' AND parent=$parent LIMIT 1");
+			$docid = $modx->db->getValue("SELECT id FROM " . $tbl_site_content . " WHERE id<>'$id' AND alias='$alias' AND parent=$parent LIMIT 1");
 		} else {
-			$docid = $modx->db->getValue("SELECT id FROM " . $tblsc . " WHERE id<>'$id' AND alias='$alias' LIMIT 1");
+			$docid = $modx->db->getValue("SELECT id FROM " . $tbl_site_content . " WHERE id<>'$id' AND alias='$alias' LIMIT 1");
 		}
 		if ($docid > 0) {
 			if ($actionToTake == 'edit') {
@@ -143,10 +146,10 @@ if ($_SESSION['mgrDocgroups']) {
 }
 
 $sql = "SELECT DISTINCT tv.*, IF(tvc.value!='',tvc.value,tv.default_text) as value ";
-$sql .= "FROM $tbltv AS tv ";
-$sql .= "INNER JOIN $tbltvt AS tvtpl ON tvtpl.tmplvarid = tv.id ";
-$sql .= "LEFT JOIN $tbltvc AS tvc ON tvc.tmplvarid=tv.id AND tvc.contentid = '$id' ";
-$sql .= "LEFT JOIN $tbltva tva ON tva.tmplvarid=tv.id  ";
+$sql .= "FROM $tbl_site_tmplvars AS tv ";
+$sql .= "INNER JOIN $tbl_site_tmplvar_templates AS tvtpl ON tvtpl.tmplvarid = tv.id ";
+$sql .= "LEFT JOIN $tbl_site_tmplvar_contentvalues AS tvc ON tvc.tmplvarid=tv.id AND tvc.contentid = '$id' ";
+$sql .= "LEFT JOIN $tbl_site_tmplvar_access tva ON tva.tmplvarid=tv.id  ";
 $sql .= "WHERE tvtpl.templateid = '" . $template . "' AND (1='" . $_SESSION['mgrRole'] . "' OR ISNULL(tva.documentgroup)" . ((!$docgrp) ? "" : " OR tva.documentgroup IN ($docgrp)") . ") ORDER BY tv.rank;";
 $rs = mysql_query($sql);
 while ($row = mysql_fetch_assoc($rs)) {
@@ -197,7 +200,7 @@ while ($row = mysql_fetch_assoc($rs)) {
 
 // get the document, but only if it already exists (d'oh!)
 if ($actionToTake != "new") {
-	$sql = "SELECT * FROM $tblsc WHERE id = $id;";
+	$sql = "SELECT * FROM $tbl_site_content WHERE id = $id;";
 	$rs = mysql_query($sql);
 	$limit = mysql_num_rows($rs);
 	if ($limit > 1) {
@@ -259,7 +262,7 @@ switch ($actionToTake) {
 		$publishedon = ($published ? time() : 0);
 		$publishedby = ($published ? $modx->getLoginUserID() : 0);
 
-		$sql = "INSERT INTO $tblsc (introtext,content, pagetitle, longtitle, type, description, alias, link_attributes, isfolder, richtext, published, parent, template, menuindex, searchable, cacheable, createdby, createdon, editedby, editedon, publishedby, publishedon, pub_date, unpub_date, contentType, content_dispo, donthit, menutitle, hidemenu)
+		$sql = "INSERT INTO $tbl_site_content (introtext,content, pagetitle, longtitle, type, description, alias, link_attributes, isfolder, richtext, published, parent, template, menuindex, searchable, cacheable, createdby, createdon, editedby, editedon, publishedby, publishedon, pub_date, unpub_date, contentType, content_dispo, donthit, menutitle, hidemenu)
 						VALUES('" . $introtext . "','" . $content . "', '" . $pagetitle . "', '" . $longtitle . "', '" . $type . "', '" . $description . "', '" . $alias . "', '" . $link_attributes . "', '" . $isfolder . "', '" . $richtext . "', '" . $published . "', '" . $parent . "', '" . $template . "', '" . $menuindex . "', '" . $searchable . "', '" . $cacheable . "', '" . $modx->getLoginUserID() . "', " . time() . ", '" . $modx->getLoginUserID() . "', " . time() . ", " . $publishedby . ", " . $publishedon . ", '$pub_date', '$unpub_date', '$contentType', '$contentdispo', '$donthit', '$menutitle', '$hidemenu')";
 
 		$rs = mysql_query($sql);
@@ -285,33 +288,37 @@ switch ($actionToTake) {
 			}
 		}
 		if (!empty($tvChanges)) {
-			$sql = 'INSERT INTO '.$tbltvc.' (tmplvarid, contentid, value) VALUES '.implode(',', $tvChanges);
+			$sql = 'INSERT INTO '.$tbl_site_tmplvar_contentvalues.' (tmplvarid, contentid, value) VALUES '.implode(',', $tvChanges);
 			$rs = mysql_query($sql);
 		}
 		//End Modification
 
-		/*******************************************************************************/
-		// put the document in the document_groups it should be in
-		// first, check that up_perms are switched on!
-		if ($use_udperms == 1) {
-			if (is_array($document_groups)) {
-				foreach ($document_groups as $dgkey => $value) {
-					$sql = "INSERT INTO $tbldg (document_group, document) values(" . stripslashes($value) . ", $key)";
-					$rs = mysql_query($sql);
-					if (!$rs) {
-						$modx->manager->saveFormValues(27);
-						echo "An error occured while attempting to add the document to a document_group.";
-						exit;
-					}
-				}
+		/*******************************
+		 * Document Access Permissions */
+		if ($use_udperms == 1 && is_array($document_groups)) {
+			$new_groups = array();
+			foreach ($document_groups as $value_pair) {
+				// first, split the pair (this is a new document, so ignore the second value
+				list($group) = explode(',', $value_pair); // @see manager/actions/mutate_content.dynamic.php @ line 1138 (permissions list)
+				$new_groups[] = '('.(int)$group.','.$key.')';
+			}
+			$saved = true;
+			if (!empty($new_groups)) {
+				$sql = 'INSERT INTO '.$tbl_document_groups.' (document_group, document) VALUES '. implode(',', $new_groups);
+				$saved = mysql_query($sql) ? $saved : false;
+			}
+			if (!$saved) {
+				$modx->manager->saveFormValues(27);
+				echo "An error occured while attempting to add the document to a document_group.";
+				exit;
 			}
 		}
-		// end of document_groups stuff!
-		/*******************************************************************************/
+		/* End Document Access Permissions *
+		 ***********************************/
 
 		/*******************************************************************************/
 		if ($parent != 0) {
-			$sql = "UPDATE $tblsc SET isfolder=1 WHERE id=" . $_REQUEST['parent'];
+			$sql = "UPDATE $tbl_site_content SET isfolder=1 WHERE id=" . $_REQUEST['parent'];
 			$rs = mysql_query($sql);
 			if (!$rs) {
 				echo "An error occured while attempting to change the document's parent to a folder.";
@@ -364,7 +371,7 @@ switch ($actionToTake) {
 	case 'edit' :
 
 		// first, get the document's current parent.
-		$sql = "SELECT parent FROM $tblsc WHERE id=" . $_REQUEST['id'];
+		$sql = "SELECT parent FROM $tbl_site_content WHERE id=" . $_REQUEST['id'];
 		$rs = mysql_query($sql);
 		if (!$rs) {
 			$modx->manager->saveFormValues(27);
@@ -393,7 +400,7 @@ switch ($actionToTake) {
 			exit;
 		}
 		// check to see document is a folder.
-		$sql = "SELECT count(*) FROM $tblsc WHERE parent=" . $_REQUEST['id'];
+		$sql = "SELECT count(*) FROM $tbl_site_content WHERE parent=" . $_REQUEST['id'];
 		$rs = mysql_query($sql);
 		if (!$rs) {
 			$modx->manager->saveFormValues(27);
@@ -406,7 +413,7 @@ switch ($actionToTake) {
 		}
 
 		// Set publishedon and publishedby
-		$was_published = $modx->db->getValue("SELECT published FROM $tblsc WHERE id='$id'");
+		$was_published = $modx->db->getValue("SELECT published FROM $tbl_site_content WHERE id='$id'");
 
 		// Keep original publish state, if change is not permitted
 		if (!$modx->hasPermission('publish_document')) {
@@ -435,7 +442,7 @@ switch ($actionToTake) {
 		));
 
 		// update the document
-		$sql = "UPDATE $tblsc SET introtext='$introtext', content='$content', pagetitle='$pagetitle', longtitle='$longtitle', type='$type', description='$description', alias='$alias', link_attributes='$link_attributes',
+		$sql = "UPDATE $tbl_site_content SET introtext='$introtext', content='$content', pagetitle='$pagetitle', longtitle='$longtitle', type='$type', description='$description', alias='$alias', link_attributes='$link_attributes',
 				isfolder=$isfolder, richtext=$richtext, published=$published, pub_date=$pub_date, unpub_date=$unpub_date, parent=$parent, template=$template, menuindex='$menuindex',
 				searchable=$searchable, cacheable=$cacheable, editedby=" . $modx->getLoginUserID() . ", editedon=" . time() . ", publishedon=$publishedon, publishedby=$publishedby, contentType='$contentType', content_dispo='$contentdispo', donthit='$donthit', menutitle='$menutitle', hidemenu='$hidemenu'  WHERE id=$id;";
 
@@ -445,7 +452,7 @@ switch ($actionToTake) {
 		}
 
 		// Modified by Raymond for TV - OrigAdded by Apodigm - DocVars
-		$sql = 'SELECT id, tmplvarid FROM '.$tbltvc.' WHERE contentid='.$id;
+		$sql = 'SELECT id, tmplvarid FROM '.$tbl_site_tmplvar_contentvalues.' WHERE contentid='.$id;
 		$rs = mysql_query($sql);
 		$tvIds = array ();
 		while ($row = mysql_fetch_assoc($rs)) {
@@ -465,46 +472,70 @@ switch ($actionToTake) {
 		}
 		// Only two queries to the db are made now - sirlancelot
 		if (!empty($deletions)) {
-			$sql = 'DELETE FROM '.$tbltvc.' WHERE id IN ('.implode(',', $deletions).')';
+			$sql = 'DELETE FROM '.$tbl_site_tmplvar_contentvalues.' WHERE id IN ('.implode(',', $deletions).')';
 			$rs = mysql_query($sql);
 		}
 		if (!empty($tvChanges)) {
-			$sql = 'REPLACE INTO '.$tbltvc.' (id, tmplvarid, contentid, value) VALUES '.implode(',', $tvChanges);
+			$sql = 'REPLACE INTO '.$tbl_site_tmplvar_contentvalues.' (id, tmplvarid, contentid, value) VALUES '.implode(',', $tvChanges);
 			$rs = mysql_query($sql);
 		}
 		//End Modification
 
-		/*******************************************************************************/
-		// put the document in the document_groups it should be in
-		// first, check that up_perms are switched on!
-		if ($use_udperms == 1) {
-			// delete old permissions on the document
-			$sql = "DELETE FROM $tbldg WHERE document=$id;";
-			$rs = mysql_query($sql);
-			if (!$rs) {
-				$modx->manager->saveFormValues(27);
-				echo "An error occured while attempting to delete previous document_group entries.";
-				exit;
+		/*******************************
+		 * Document Access Permissions */
+		if ($use_udperms == 1 && is_array($document_groups)) {
+			$new_groups = array();
+			// Process the new input
+			foreach ($document_groups as $value_pair) {
+				list($group, $link_id) = explode(',', $value_pair); // @see manager/actions/mutate_content.dynamic.php @ line 1138 (permissions list)
+				$new_groups[$group] = $link_id;
 			}
-			if (is_array($document_groups)) {
-				foreach ($document_groups as $dgkey => $value) {
-					$sql = "INSERT INTO $tbldg (document_group, document) values(" . stripslashes($value) . ", $id)";
-					$rs = mysql_query($sql);
-					if (!$rs) {
-						$modx->manager->saveFormValues(27);
-						echo "An error occured while attempting to add the document to a document_group.<br /><i>$sql</i>";
-						exit;
-					}
+
+			// Grab the current set of permissions on this document the user can access
+			$isManager = $modx->hasPermission('access_permissions');
+			$isWeb     = $modx->hasPermission('web_access_permissions');
+			$sql = 'SELECT groups.id, groups.document_group FROM '.$tbl_document_groups.' AS groups '.
+			       'LEFT JOIN '.$tbl_documentgroup_names.' AS dgn ON dgn.id = groups.document_group '.
+			       'WHERE ((1='.(int)$isManager.' AND dgn.private_memgroup) '.
+			       'OR    (1='.(int)$isWeb.' AND dgn.private_webgroup))'.
+			       'AND groups.document = '.$id;
+			$rs = mysql_query($sql);
+			$old_groups = array();
+			while ($row = mysql_fetch_assoc($rs)) $old_groups[$row['document_group']] = $row['id'];
+
+			// Update the permissions in the database
+			$insertions = $deletions = array();
+			foreach ($new_groups as $group => $link_id) {
+				if (array_key_exists($group, $old_groups)) {
+					// The link already exists?
+					unset($old_groups[$group]);
+					continue;
+				} elseif ($link_id == 'new') {
+					$insertions[] = '('.(int)$group.','.$id.')';
 				}
 			}
+			$saved = true;
+			if (!empty($insertions)) {
+				$sql_insert = 'INSERT INTO '.$tbl_document_groups.' (document_group, document) VALUES '.implode(',', $insertions);
+				$saved = mysql_query($sql_insert) ? $saved : false;
+			}
+			if (!empty($old_groups)) {
+				$sql_delete = 'DELETE FROM '.$tbl_document_groups.' WHERE id IN ('.implode(',', $old_groups).')';
+				$saved = mysql_query($sql_delete) ? $saved : false;
+			}
+			if (!$saved) {
+				$modx->manager->saveFormValues(27);
+				echo "An error occured while saving document groups.";
+				exit;
+			}
 		}
-		// end of document_groups stuff!
-		/*******************************************************************************/
+		/* End Document Access Permissions *
+		 ***********************************/
 
 		/*******************************************************************************/
 		// do the parent stuff
 		if ($parent != 0) {
-			$sql = "UPDATE $tblsc SET isfolder=1 WHERE id=" . $_REQUEST['parent'];
+			$sql = "UPDATE $tbl_site_content SET isfolder=1 WHERE id=" . $_REQUEST['parent'];
 			$rs = mysql_query($sql);
 			if (!$rs) {
 				echo "An error occured while attempting to change the new parent to a folder.";
@@ -512,7 +543,7 @@ switch ($actionToTake) {
 		}
 
 		// finished moving the document, now check to see if the old_parent should no longer be a folder.
-		$sql = "SELECT count(*) FROM $tblsc WHERE parent=$oldparent";
+		$sql = "SELECT count(*) FROM $tbl_site_content WHERE parent=$oldparent";
 		$rs = mysql_query($sql);
 		if (!$rs) {
 			echo "An error occured while attempting to find the old parents' children.";
@@ -521,7 +552,7 @@ switch ($actionToTake) {
 		$limit = $row['count(*)'];
 
 		if ($limit == 0) {
-			$sql = "UPDATE $tblsc SET isfolder=0 WHERE id=$oldparent";
+			$sql = "UPDATE $tbl_site_content SET isfolder=0 WHERE id=$oldparent";
 			$rs = mysql_query($sql);
 			if (!$rs) {
 				echo "An error occured while attempting to change the old parent to a regular document.";
@@ -877,39 +908,37 @@ function stripAlias($alias) {
 
 // -- Save META Keywords --
 function saveMETAKeywords($id) {
-	global $modx;
-	global $keywords;
-	global $metatags;
+	global $modx, $keywords, $metatags,
+	       $tbl_keyword_xref,
+	       $tbl_site_content,
+	       $tbl_site_content_metatags;
 
 	if ($modx->hasPermission('edit_doc_metatags')) {
 		// keywords - remove old keywords first
-		$tbl = $modx->getFullTableName("keyword_xref");
-		$modx->db->delete($tbl, "content_id='$id'");
+		$modx->db->delete($tbl_keyword_xref, "content_id='$id'");
 		for ($i = 0; $i < count($keywords); $i++) {
 			$kwid = $keywords[$i];
 			$flds = array (
-				content_id => $id,
-				keyword_id => $kwid
+				'content_id' => $id,
+				'keyword_id' => $kwid
 			);
-			$modx->db->insert($flds, $tbl);
+			$modx->db->insert($flds, $tbl_keywords_xref);
 		}
 		// meta tags - remove old tags first
-		$tbl = $modx->getFullTableName("site_content_metatags");
-		$modx->db->delete($tbl, "content_id='$id'");
+		$modx->db->delete($tbl_site_content_metatags, "content_id='$id'");
 		for ($i = 0; $i < count($metatags); $i++) {
 			$kwid = $metatags[$i];
 			$flds = array (
-				content_id => $id,
-				metatag_id => $kwid
+				'content_id' => $id,
+				'metatag_id' => $kwid
 			);
-			$modx->db->insert($flds, $tbl);
+			$modx->db->insert($flds, $tbl_site_content_metatags);
 		}
-		$tbl = $modx->getFullTableName("site_content");
 		$flds = array (
-			haskeywords => (count($keywords) ? 1 : 0), 
-			hasmetatags => (count($metatags) ? 1 : 0)
+			'haskeywords' => (count($keywords) ? 1 : 0),
+			'hasmetatags' => (count($metatags) ? 1 : 0)
 		);
-		$modx->db->update($flds, $tbl, "id='$id'");
+		$modx->db->update($flds, $tbl_site_content, "id='$id'");
 	}
 }
 

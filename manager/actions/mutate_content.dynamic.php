@@ -579,6 +579,7 @@ if (is_array($evtOut))
 <?php
 				$sql = 'SELECT templatename, id FROM '.$tbl_site_templates.' ORDER BY templatename ASC';
 				$rs = mysql_query($sql);
+
 				while ($row = mysql_fetch_assoc($rs)) {
 					if (isset($_REQUEST['newtemplate'])) {
 						$selectedtext = $row['id'] == $_REQUEST['newtemplate'] ? ' selected="selected"' : '';
@@ -982,50 +983,90 @@ if (($content['richtext'] == 1 || $_REQUEST['a'] == 4) && $use_editor == 1) {
 <?php } ?>
 
 <?php
+/*******************************
+ * Document Access Permissions */
 if ($use_udperms == 1) {
 	$groupsarray = array();
 	$sql = '';
 
-	if ($_REQUEST['a'] == '27') {
-		// Fetch permissions on the document from the database
-		$sql = 'SELECT * FROM '.$tbl_document_groups.' WHERE document=\''.$id.'\'';
-	} elseif (!empty ($_REQUEST['pid'])) {
-		// Set permissions on the document based on the permissions of the parent document
-		$sql = 'SELECT * FROM '.$tbl_document_groups.' WHERE document=\''.$_REQUEST['pid'].'\'';
-	}
-	if ($sql) {
+	$documentId = ($_REQUEST['a'] == '27' ? $id : (!empty($_REQUEST['pid']) ? $_REQUEST['pid'] : 0));
+	if ($documentId > 0) {
+		// Load up, the permissions from the parent (if new document) or existing document
+		$sql = 'SELECT id, document_group FROM '.$tbl_document_groups.' WHERE document=\''.$documentId.'\'';
 		$rs = mysql_query($sql);
 		while ($currentgroup = mysql_fetch_assoc($rs))
-			$groupsarray[] = $currentgroup['document_group'];
+			$groupsarray[] = $currentgroup['document_group'].','.$currentgroup['id'];
+
+		// Load up the current permissions and names
+		$sql = 'SELECT dgn.*, groups.id AS link_id '.
+		       'FROM '.$tbl_document_group_names.' AS dgn '.
+		       'LEFT JOIN '.$tbl_document_groups.' AS groups ON groups.document_group = dgn.id '.
+		       '  AND groups.document = '.$documentId.' '.
+		       'ORDER BY name';
+	} else {
+		// Just load up the names, we're starting clean
+		$sql = 'SELECT *, NULL AS link_id FROM '.$tbl_document_group_names.' ORDER BY name';
 	}
 
 	// retain selected doc groups between post
 	if (isset($_POST['docgroups']))
 		$groupsarray = array_merge($groupsarray, $_POST['docgroups']);
 
-	$sql = 'SELECT name, id FROM '.$tbl_document_group_names.' ORDER BY name';
+	// Query the permissions and names from above
 	$rs = mysql_query($sql);
 	$limit = mysql_num_rows($rs);
 
-	$permissions = array();
+	$isManager = $modx->hasPermission('access_permissions');
+	$isWeb     = $modx->hasPermission('web_access_permissions');
+
+	// Setup Basic attributes for each Input box
+	$inputAttributes = array(
+		'type' => 'checkbox',
+		'class' => 'checkbox',
+		'name' => 'docgroups[]',
+		'onclick' => 'makePublic(false);',
+	);
+	$permissions = array(); // New Permissions array list (this contains the HTML)
+
+	// Loop through the permissions list
 	for ($i = 0; $i < $limit; $i++) {
 		$row = mysql_fetch_assoc($rs);
-		$checked = in_array($row['id'], $groupsarray);
-		if ($modx->hasPermission('access_permissions')) {
-			if ($checked)
-				$notPublic = true;
-			$permissions[] = "\t\t".'<li><input type="checkbox" class="checkbox" name="docgroups[]" id="group'.$row['id'].'" value="'.$row['id'].'"'.($checked ? ' checked="checked"' : '').' onclick="makePublic(false);" />'.
-				'<label for="group'.$row['id'].'">'.$row['name'].'</label></li>';
-		} else {
-			if ($checked)
-				$permissions[] = "\t\t".'<input type="hidden" name="docgroups[]"  value="'.$row['id'].'" />';
-		}
-	}
-	if ($modx->hasPermission('access_permissions')) {
-		array_unshift($permissions, "\t\t".'<li><input type="checkbox" class="checkbox" name="chkalldocs" id="groupall"'.(!$notPublic ? ' checked="checked"' : '').' onclick="makePublic(true);" /><label for="groupall" class="warning">' . $_lang['all_doc_groups'] . '</label></li>');
+
+		// Create an inputValue pair (group ID and group link (if it exists))
+		$inputValue = $row['id'].','.($row['link_id'] ? $row['link_id'] : 'new');
+		$inputId    = 'group-'.$row['id'];
+
+		$checked    = in_array($inputValue, $groupsarray);
+		if ($checked) $notPublic = true; // Mark as private access (either web or manager)
+
+		// Skip the access permission if the user doesn't have access...
+		if ((!$isManager && $row['private_memgroup'] == '1') || (!$isWeb && $row['private_webgroup'] == '1'))
+			continue;
+
+		// Setup attributes for this Input box
+		$inputAttributes['id']    = $inputId;
+		$inputAttributes['value'] = $inputValue;
+		if ($checked)
+		        $inputAttributes['checked'] = 'checked';
+		else    unset($inputAttributes['checked']);
+
+		// Create attribute string list
+		$inputString = array();
+		foreach ($inputAttributes as $k => $v) $inputString[] = $k.'="'.$v.'"';
+
+		// Make the <input> HTML
+		$inputHTML = '<input '.implode(' ', $inputString).' />';
+
+		$permissions[] = "\t\t".'<li>'.$inputHTML.'<label for="'.$inputId.'">'.$row['name'].'</label></li>';
 	}
 
-	if ($modx->hasPermission('web_access_permissions')) { ?>
+	// See if the Access Permissions section is worth displaying...
+	if (!empty($permissions)) {
+		// Add the "All Document Groups" item if we have rights in both contexts
+		if ($isManager && $isWeb)
+			array_unshift($permissions,"\t\t".'<li><input type="checkbox" class="checkbox" name="chkalldocs" id="groupall"'.(!$notPublic ? ' checked="checked"' : '').' onclick="makePublic(true);" /><label for="groupall" class="warning">' . $_lang['all_doc_groups'] . '</label></li>');
+		// Output the permissions list...
+?>
 <!-- Access Permissions -->
 <div class="sectionHeader"><?php echo $_lang['access_permissions']?></div>
 <div class="sectionBody">
@@ -1054,9 +1095,12 @@ if ($use_udperms == 1) {
 	<ul><?php echo "\n".implode("\n", $permissions)."\n"?>
 	</ul>
 </div><!-- end .sectionBody -->
-<?php }
-
-} ?>
+<?php
+	} // !empty($permissions)
+}
+/* End Document Access Permissions *
+ ***********************************/
+?>
 
 <input type="submit" name="save" style="display:none" />
 <?php

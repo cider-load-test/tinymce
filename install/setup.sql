@@ -778,6 +778,12 @@ ALTER TABLE `{PREFIX}web_user_attributes`
   MODIFY COLUMN `state` varchar(25) NOT NULL default '',
   MODIFY COLUMN `zip` varchar(25) NOT NULL default '';
 
+# Set the private manager group flag
+UPDATE {PREFIX}documentgroup_names AS dgn
+  LEFT JOIN {PREFIX}membergroup_access AS mga ON mga.documentgroup = dgn.id
+  LEFT JOIN {PREFIX}webgroup_access AS wga ON wga.documentgroup = dgn.id
+  SET dgn.private_memgroup = (mga.membergroup IS NOT NULL),
+      dgn.private_webgroup = (wga.webgroup IS NOT NULL);
 
 # ]]upgrade-able
 
