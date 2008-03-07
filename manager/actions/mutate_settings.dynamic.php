@@ -895,13 +895,8 @@ function updateContentType(){
           </tr>
           <tr id='rbRow4' class='row3' style="display: <?php echo $use_browser==1 ? $displayStyle : 'none' ; ?>">
             <td nowrap class="warning"><b><?php echo $_lang["rb_base_dir_title"]?></b></td>
-            <td> <?php
-				function getResourceBaseDir() {
-					global $base_path;
-					return $base_path."assets/";
-				}
-				?>
-              <input onchange="documentDirty=true;" type='text' maxlength='255' style="width: 250px;" name="rb_base_dir" value="<?php echo isset($rb_base_dir) ? $rb_base_dir : getResourceBaseDir() ; ?>" />
+            <td> 
+              <?php echo $base_path; ?><input onchange="documentDirty=true;" type='text' maxlength='255' style="width: 250px;" name="rb_base_dir" value="<?php echo isset($rb_base_dir) ? $rb_base_dir : "assets/" ; ?>" />
               </td>
           </tr>
           <tr id='rbRow5' class='row3' style="display: <?php echo $use_browser==1 ? $displayStyle : 'none' ; ?>">
@@ -913,13 +908,8 @@ function updateContentType(){
           </tr>
           <tr id='rbRow7' class='row3' style="display: <?php echo $use_browser==1 ? $displayStyle : 'none' ; ?>">
             <td nowrap class="warning"><b><?php echo $_lang["rb_base_url_title"]?></b></td>
-            <td> <?php
-				function getResourceBaseUrl() {
-					global $site_url;
-					return $site_url . "assets/";
-				}
-				?>
-              <input onchange="documentDirty=true;" type='text' maxlength='255' style="width: 250px;" name="rb_base_url" value="<?php echo isset($rb_base_url) ? $rb_base_url : getResourceBaseUrl() ; ?>" />
+            <td> 
+              <?php echo $site_url; ?><input onchange="documentDirty=true;" type='text' maxlength='255' style="width: 250px;" name="rb_base_url" value="<?php echo isset($rb_base_url) ? $rb_base_url : "assets/" ; ?>" />
               </td>
           </tr>
           <tr id='rbRow8' class='row3' style="display: <?php echo $use_browser==1 ? $displayStyle : 'none' ; ?>">
