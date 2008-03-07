@@ -19,6 +19,14 @@
 	<head>
 		<title>FCKeditor - Resources Browser</title>
 		<link href="browser.css" type="text/css" rel="stylesheet">
+<?php
+if($_GET['editor'] == 'tinymce3' && $_GET['editorpath']){
+?>
+		<script language="javascript" type="text/javascript" src="<?php echo $_GET['editorpath']; ?>/jscripts/tiny_mce/tiny_mce_popup.js"></script>
+		<script language="javascript" type="text/javascript" src="<?php echo $_GET['editorpath']; ?>/tinymce.modxfb.js"></script>
+<?php
+}else{
+?>
 		<script language="javascript">
 			function SetUrl(fileUrl){
 				window.top.opener.SetUrl(fileUrl);
@@ -26,6 +34,9 @@
 				window.top.opener.focus();
 			}
 		</script>
+<?php
+}
+?>
 	</head>
 	<frameset cols="150,*" framespacing="0" bordercolor="#f1f1e3" frameborder="no" class="Frame_none">
 		<frameset rows="50,*" framespacing="0"  class="Frame_r">

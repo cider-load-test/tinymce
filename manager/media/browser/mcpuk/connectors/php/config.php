@@ -40,8 +40,11 @@ include("../../../../../includes/config.inc.php");
  */
 startCMSSession(); 
 if(!isset($_SESSION['mgrValidated'])) {
-	die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
+	if(!isset($_SESSION['webValidated'])){
+		die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
+	}
 }
+
 // connect to the database
 if(@!$modxDBConn = mysql_connect($database_server, $database_user, $database_password)) {
 	die("Failed to create the database connection!");
@@ -54,6 +57,16 @@ if(@!$modxDBConn = mysql_connect($database_server, $database_user, $database_pas
 define('IN_MANAGER_MODE', 'true'); // set this so that user_settings will trust us.
 include("../../../../../includes/settings.inc.php");
 include("../../../../../includes/user_settings.inc.php");
+
+if($settings['use_browser'] != 1){
+	die("<b>PERMISSION DENIED</b><br /><br />You do not have permission to access this file!");
+}
+
+if(!isset($_SESSION['mgrValidated'])){
+	if($_SESSION['webValidated'] && $settings['rb_webuser'] != 1 ){
+		die("<b>PERMISSION DENIED</b><br /><br />You do not have permission to access this file!");
+	}
+}
 
 // make arrays from the file upload settings
 $upload_files = explode(',',$upload_files);
