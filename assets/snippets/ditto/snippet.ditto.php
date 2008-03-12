@@ -359,7 +359,7 @@ $dateFormat = isset($dateFormat)? $dateFormat : $_lang["dateFormat"];
 	Related:
 	- <dateSource>
 */
-$display = isset($display) ? $display : 3;
+$display = isset($display) ? $display : "all";
 /*
 	Param: display
 
@@ -371,7 +371,7 @@ $display = isset($display) ? $display : 3;
 	"all" - All documents found
 
 	Default:
-	3
+	"all"
 	
 	Related:
 	- <queryLimit>
@@ -407,7 +407,7 @@ $showPublishedOnly = isset($showPublishedOnly) ? $showPublishedOnly : 1;
 	1 - show both published and unpublished documents
 	
 	Default:
-	1 - show only published documents
+	1 - show both published and unpublished documents
 	
 	Related:
 	- <seeThruUnpub>

@@ -173,9 +173,9 @@ class ditto {
 					// find last space
 				$sortBy = substr($input,0,$position);
 					$sortBy = !empty($sortBy) ? $sortBy : 'id';
-					$sortBy = $this->checkAdvSort($sortBy,$sortDir);
 				$sortDir = substr($input,$position);
 					$sortDir = !empty($sortDir) ? trim($sortDir) : 'asc';
+				$sortBy = $this->checkAdvSort($sortBy,$sortDir);
 				$this->addField($sortBy,"backend");
 				$orderBy['parsed'][] = array($sortBy,strtoupper($sortDir));
 			}
