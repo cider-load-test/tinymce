@@ -27,7 +27,7 @@ $cacheable = $_POST['cacheable'];
 $syncsite = $_POST['syncsite'];
 $pub_date = $_POST['pub_date'];
 $unpub_date = $_POST['unpub_date'];
-$document_groups = $_POST['docgroups'];
+$document_groups = (isset($_POST['chkalldocs']) && $_POST['chkalldocs'] == 'on') ? array() : $_POST['docgroups'];
 $type = $_POST['type'];
 $keywords = $_POST['keywords'];
 $metatags = $_POST['metatags'];
