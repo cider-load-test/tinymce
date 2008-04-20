@@ -4,6 +4,8 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.2 (rev 3621)
 ====================================
+* Changing TVs no longer looses the sort order  on templates to which they're assigned (see http://modxcms.com/forums/index.php/topic,16090.msg146881.html#msg146881) (3622)
+* Insert CDATA Tags into Weblogin snippet code so it will validate (3622)
 * [#MODX-101] Fix ability to make document Public after it has been assigned to one or more Document Groups
 * Patches to Ditto 2.1 to fix sorting and change default docs displayed number from 3 to "all" (see http://modxcms.com/forums/index.php/topic,23204.msg146176.html#msg146176) (3511)
 * [#MODX-50] stripAlias function converts named entities to their numeric equivalents and then further to their actual character.
