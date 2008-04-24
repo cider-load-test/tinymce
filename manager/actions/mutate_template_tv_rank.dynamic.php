@@ -11,8 +11,10 @@ if (!is_numeric($_REQUEST['id'])) {
 }
 
 if ($manager_theme) {
-        $manager_theme .= '/';
-else    $manager_theme  = '';
+	$manager_theme .= '/';
+} else  {
+	$manager_theme  = '';
+}
 
 // Get table names (alphabetical)
 $tbl_site_templates         = $modx->getFullTableName('site_templates');
