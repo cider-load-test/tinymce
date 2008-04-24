@@ -486,7 +486,7 @@ function decode(s) {
 
 </script>
 
-<form name="mutate" method="post" enctype="multipart/form-data" action="index.php">
+<form name="mutate" id="mutateContent" method="post" enctype="multipart/form-data" action="index.php">
 <?php
 
 // invoke OnDocFormPrerender event
