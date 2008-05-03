@@ -721,6 +721,7 @@ $_lang["role_edit_snippet"] = 'Edit snippets';
 $_lang["role_edit_template"] = 'Edit site templates';
 $_lang["role_edit_user"] = 'Edit users';
 $_lang["role_edit_web_user"] = 'Edit web users';
+$_lang["role_empty_trash"] = 'Permanently purge deleted documents';
 $_lang["role_errors"] = 'View error dialog';
 $_lang['role_export_static'] = 'Export Static HTML';
 $_lang["role_eventlog_management"] = 'Event log management';
