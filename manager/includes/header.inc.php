@@ -12,7 +12,7 @@ if(IN_MANAGER_MODE!="true") die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please
     <script src="media/script/mootools/moodx.js" type="text/javascript"></script>
     <script language="JavaScript" type="text/javascript">
         window.addEvent('load', document_onload);
-        window.addEvent('unload', document_onunload);
+        window.addEvent('beforeunload', document_onunload);
         
         function document_onload() {
             stopWorker();
