@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.2 (rev 3705 - May 15, 2008)
 ====================================
+* Added plugin to show image previews in the manager for Image TVs as a tribute to Brett joining the team (3709)
 * [FS#863] — IE7 gives JS error on navigating away from/logging out of Manager (3705)
 * [MODX-124] Added a manager role for emptying the trash/permanently purging docs (rev 3682)
 * Changing TVs no longer looses the sort order  on templates to which they're assigned (see http://modxcms.com/forums/index.php/topic,16090.msg146881.html#msg146881) (3622)
