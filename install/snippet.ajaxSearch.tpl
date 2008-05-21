@@ -5,7 +5,7 @@
         Ajax-driven & Flexible Search form
 
   Version:
-        1.7.0.2
+        1.7.1
 
   Created by:
 	    Jason Coward (opengeek - jason@opengeek.com)
@@ -57,10 +57,10 @@ MORE : See the ajaxSearch.readme.txt file for more informations
 ---------------------------------------------------------------- */
 
 // ajaxSearch version being executed
-define('AS_VERSION', '1.7.0.2');
+define('AS_VERSION', '1.7.1');
 
 // Path where ajaxSearch is installed
-define('AS_SPATH', 'assets/snippets/AjaxSearch/');
+define('AS_SPATH', 'assets/snippets/ajaxSearch/');
 
 //==============================================================================
 //include snippet file
