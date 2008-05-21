@@ -14,10 +14,10 @@ $BINDINGS = array (
     'DIRECTORY'
 );
 
-function ProcessTVCommand($value, $name = '', $docid= '') {
+function ProcessTVCommand($value, $name = '', $docid = '') {
     global $modx;
     $etomite = & $modx;
-    $docid= intval($docid) ? intval($docid) : $modx->documentIdentifier;
+    $docid = intval($docid) ? intval($docid) : $modx->documentIdentifier;
     $nvalue = trim($value);
     if (substr($nvalue, 0, 1) != '@')
         return $value;
@@ -61,23 +61,25 @@ function ProcessTVCommand($value, $name = '', $docid= '') {
                 break;
 
             case "INHERIT" :
-		$output = $param; // Default to param value if no content from parents
-		$doc = $modx->getPageInfo($docid, 0, 'id,parent');
+                $output = $param; // Default to param value if no content from parents
+                $doc = $modx->getPageInfo($docid, 0, 'id,parent');
 
-		while ($doc['parent'] != 0) {
-			$parent_id = $doc['parent'];
+                while ($doc['parent'] != 0) {
+                    $parent_id = $doc['parent'];
 
-			// Grab document regardless of publish status
-			$doc = $modx->getPageInfo($parent_id, 0, 'id,parent,published');
-			if ($doc['parent'] != 0 && !$doc['published']) continue; // hide unpublished docs if we're not at the top
+                    // Grab document regardless of publish status
+                    $doc = $modx->getPageInfo($parent_id, 0, 'id,parent,published');
+                    if ($doc['parent'] != 0 && !$doc['published'])
+                        continue; // hide unpublished docs if we're not at the top
 
-			$tv = $modx->getTemplateVar($name, '*', $doc['id'], $doc['published']);
-			if ((string)$tv['value'] !== '' && $tv['value']{0} != '@') {
-				$output = (string)$tv['value'];
-				break 2;
-			}
-		}
-		break;
+                    $tv = $modx->getTemplateVar($name, '*', $doc['id'], $doc['published']);
+                    if ((string) $tv['value'] !== '' && $tv['value'] { 0 }
+                        != '@') {
+                        $output = (string) $tv['value'];
+                        break 2;
+                    }
+                }
+                break;
 
             case 'DIRECTORY' :
                 $files = array ();
@@ -127,7 +129,7 @@ function ProcessFile($file) {
 function ParseCommand($binding_string) {
     global $BINDINGS;
     $match = array ();
-    $regexp= '/@(' . implode('|', $BINDINGS) . ')\s*(.*)/im'; // Split binding on whitespace
+    $regexp = '/@(' . implode('|', $BINDINGS) . ')\s*(.*)/im'; // Split binding on whitespace
     if (preg_match($regexp, $binding_string, $match)) {
         // We can't return the match array directly because the first element is the whole string
         $binding_array = array (
