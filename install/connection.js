@@ -16,7 +16,8 @@ window.addEvent('domready', function(){
             host: host,
             uid: uid,
             pwd: pwd,
-            database_collation: database_collation  
+            database_collation: database_collation,
+            language: language
         });
          
         new Ajax(url, { postBody: pars, update: $('collation'), onComplete: testServer } ).request();
@@ -42,7 +43,8 @@ window.addEvent('domready', function(){
             pwd: pwd,
             database_name: database_name,
             tableprefix: tableprefix,
-            database_collation: database_collation
+            database_collation: database_collation,
+            language: language
         });
 
         new Ajax(url, { postBody: pars, update: $('databasestatus') } ).request();
@@ -61,7 +63,8 @@ function testServer(){
         q: url,
         host: host,
         uid: uid,
-        pwd: pwd
+        pwd: pwd,
+        language: language
     });
          
     new Ajax(url, { postBody: pars, update: $('serverstatus'), onComplete: setColor } ).request();
