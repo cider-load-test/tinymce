@@ -1,13 +1,15 @@
 //ajaxSearch.js
-//Version: 1.7 - refactored by coroico
+//Version: 1.7.1 - refactored by coroico
 //Created by: KyleJ (kjaebker@muddydogpaws.com)
 //Created on: 03/14/06
 //Description: This code is used to setup the ajax search request.
 //My thanks to Steve Smith of orderlist.com for sharing his code on how he did this
 //Live Search by Thomas (Shadock)
 
-//Updated: 01/02/08 - Added version, folder and some others parameters - 1.7
-//Updated: 12/14/07 - Transeffect fix : bad URI with several document groups - 1.6.2d - 
+//Updated: 06/03/08 - added advSearch and Hidden from menu options - 1.7.1
+//Updated: 03/03/08 - Fix : % character freeze the search - 1.7.1
+//Updated: 01/02/08 - Added version, folder and some others parameters - 1.7.0
+//Updated: 12/14/07 - Fix : bad URI with several document groups - 1.6.2d - 
 //Updated: 11/17/07 - Added IDs document selection - 1.6.2
 //Updated: 11/06/07 - character encoding and opacity troubles corrected - 1.6.1
 
@@ -19,10 +21,10 @@
 //set the ajax call to the correct location of ajaxSearch.php
 
 // AjaxSearch Snippet folder location
-var _base = 'assets/snippets/AjaxSearch/';
+var _base = 'assets/snippets/ajaxSearch/';
 
 // AjaxSearch Snippet folder
-var _version = '1.7.0.2';
+var _version = '1.7.1';
 
 //From Thomas : vars for live search
 var _oldInputFieldValue = "";
@@ -33,75 +35,75 @@ var is_searching = false;
 var liveTimeout = null;
 
 function activateSearch() {
-	var searchForm = $('ajaxSearch_form');
+  var searchForm = $('ajaxSearch_form');
 
   if (as_version != _version) {
     alert("AjaxSearch version obsolete. Check the version of AjaxSearch.js file");
     return;
   }
-  
+
   if (searchForm) {
-		$('ajaxSearch_form').onsubmit = function() { doSearch(); return false; };
-		
+    $('ajaxSearch_form').onsubmit = function() { doSearch(); return false; };
+
     var i = new Element('img');
-		i.setProperties({
-		   src: _base + 'images/indicator.white.gif', //Loading Image
-		   alt: 'loading',
-		   id: 'indicator'
-		});
-		toggleImage(i);
-		
-		searchForm.appendChild(i);
+    i.setProperties({
+       src: _base + 'images/indicator.white.gif', //Loading Image
+       alt: 'loading',
+       id: 'indicator'
+    });
+    toggleImage(i);
+
+    searchForm.appendChild(i);
 
     var c = new Element('img'); //Close Image
-		c.setProperties({
-		   src: _base + 'images/cross.png', 
-		   alt: 'close search',
-		   id: 'searchClose'
-		});
-		c.addEvent('click', function(){closeSearch();});
+    c.setProperties({
+       src: _base + 'images/cross.png', 
+       alt: 'close search',
+       id: 'searchClose'
+    });
+    c.addEvent('click', function(){closeSearch();});
 
     if (liveSearch) {
-			c.setStyles({
-			   position: 'absolute',
-			   top: '1px',
-			   right: '1px'
-			});
+      c.setStyles({
+         position: 'absolute',
+         top: '1px',
+         right: '1px'
+      });
     } else {
       toggleImage(c);
     }
-		
-		var s = $('ajaxSearch_output');
-		
+
+    var s = $('ajaxSearch_output');
+
     var n = new Element('div'); // New search results div
-		n.setProperty('id', 'current-search-results');
-		n.setStyle('opacity', '1');
-		s.appendChild(n);
-		newToggle = new Fx.Slide('current-search-results', {duration: 600}).hide();
-		newToggle.isDisplayed = function() {
-			return this.wrapper['offset'+this.layout.capitalize()] > 0;
-		}
-		
+    n.setProperty('id', 'current-search-results');
+    n.setStyle('opacity', '1');
+    s.appendChild(n);
+    newToggle = new Fx.Slide('current-search-results', {duration: 600}).hide();
+    newToggle.isDisplayed = function() {
+      return this.wrapper['offset'+this.layout.capitalize()] > 0;
+    }
+
     if (liveSearch) {
-			s.appendChild(c);
-		} else {
-			searchForm.appendChild(c);
-		}        
-        
+      s.appendChild(c);
+    } else {
+      searchForm.appendChild(c);
+    }        
+
     is_searching = false;
     search_open = false;
     if (liveSearch) {
-			$('ajaxSearch_input').addEvent('keyup', liveSearchReq);
+      $('ajaxSearch_input').addEvent('keyup', liveSearchReq);
       $('ajaxSearch_submit').setStyle('opacity', '0');         
     }
   }
 }
 
 function liveSearchReq() {
-	if (liveTimeout) {
-		window.clearTimeout(liveTimeout);
-	}
-	liveTimeout = window.setTimeout("doSearch()",400);
+  if (liveTimeout) {
+    window.clearTimeout(liveTimeout);
+  }
+  liveTimeout = window.setTimeout("doSearch()",400);
 }
 
 function doSearch() {
@@ -113,56 +115,59 @@ function doSearch() {
   is_searching = true;
   c = $('current-search-results');
 
-	toggleImage($('indicator'));
+  toggleImage($('indicator'));
   if (!liveSearch) {if (!search_open) {toggleImage($('searchClose'));}}
   search_open = true;
   b = $('ajaxSearch_submit');
   b.disabled = true;
-	
-	if (newToggle.isDisplayed()) {
-		newToggle.toggle(); 
-	}
+  
+  if (newToggle.isDisplayed()) {
+    newToggle.toggle(); 
+  }
 
   // Setup the parameters and make the ajax call
-	var pars = Object.toQueryString({
-		q: _base + 'ajaxSearch.php',
-		search: s, 
-		as_version: as_version,
-		debug: debug,
-		ajaxMax: ajaxMax,
-		stripHtml: stripHtml,
-		stripSnip: stripSnip,
-		stripSnippets: stripSnippets,
-		useAllWords: useAllWords,
-		searchStyle: encodeURI(searchStyle),
-		minChars: minChars,
-		showMoreResults: showMoreResults,
-		moreResultsPage: moreResultsPage,
-		as_language: as_language,
-		extract: extract,
-		extractLength: extractLength,
-		docgrp: encodeURI(docgrp),
-		highlightResult: highlightResult,
-		listIDs: listIDs
-	});
-	
+  var pars = Object.toQueryString({
+    q: _base + 'ajaxSearch.php',
+    search: s, 
+    as_version: as_version,
+    debug: debug,
+    ajaxMax: ajaxMax,
+    stripHtml: stripHtml,
+    stripSnip: stripSnip,
+    stripSnippets: stripSnippets,
+    searchStyle: encodeURI(searchStyle),
+    advSearch: encodeURI(advSearch),
+    minChars: minChars,
+    showMoreResults: showMoreResults,
+    moreResultsPage: moreResultsPage,
+    as_language: as_language,
+    extract: extract,
+    extractLength: extractLength,
+    docgrp: encodeURI(docgrp),
+    idgrp: encodeURI(idgrp),
+    idType: idType,
+    depth: depth,
+    highlightResult: highlightResult,
+    hideMenu: hideMenu
+  });
+
   var ajaxSearchReq = new Ajax('index-ajax.php', {postBody: pars, onComplete: doSearchResponse});
- 	if (newToggle.isDisplayed()) {
-		newToggle.toggle(); 
-		ajaxSearchReq.request.delay(600, ajaxSearchReq);
-	} else {
-		ajaxSearchReq.request();
-	}
+   if (newToggle.isDisplayed()) {
+    newToggle.toggle(); 
+    ajaxSearchReq.request.delay(600, ajaxSearchReq);
+  } else {
+    ajaxSearchReq.request();
+  }
   return true;
 }
 
 function doSearchResponse(request) {
   var o = $('ajaxSearch_output');
   o.setStyle('opacity', opacity);  // set of opacity parameter
-  $('current-search-results').setHTML(decodeURIComponent(request));
-	newToggle.toggle();
-	is_searching = false;
-	setTimeout('resetForm()',600);
+  $('current-search-results').setHTML(request);
+  newToggle.toggle();
+  is_searching = false;
+  setTimeout('resetForm()',600);
 }
 
 function resetForm() {
@@ -172,8 +177,8 @@ function resetForm() {
 }
 
 function closeSearch() {
-	newToggle.toggle();
-	setTimeout('clearSearch()',600);
+  newToggle.toggle();
+  setTimeout('clearSearch()',600);
 }
 
 function clearSearch() {
@@ -187,12 +192,12 @@ function clearSearch() {
 }
 
 function toggleImage(imgElement) {
-	imgStyle = imgElement.getStyle('opacity');
-	if (imgStyle == '0') {
-		imgElement.setStyle('opacity', '1');
-	} else {
-		imgElement.setStyle('opacity', '0');
-	}
+  imgStyle = imgElement.getStyle('opacity');
+  if (imgStyle == '0') {
+    imgElement.setStyle('opacity', '1');
+  } else {
+    imgElement.setStyle('opacity', '0');
+  }
 }
 
 //Event.observe(window, 'load', activateSearch, false);

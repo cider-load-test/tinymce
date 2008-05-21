@@ -1,5 +1,5 @@
 
-AjaxSearch Readme verion 1.7
+AjaxSearch Readme version 1.7.1
 
 ---------------------------------------------------------------
 :: Snippet: ajaxSearch
@@ -8,7 +8,7 @@ AjaxSearch Readme verion 1.7
         Ajax-driven & Flexible Search form
 
   Version:
-        1.7
+        1.7.1
 
   Created by:
 	    Jason Coward (opengeek - jason@opengeek.com)
@@ -51,6 +51,11 @@ This is done automatically with the addJscript parameter unless you set it to 0.
 :: Changelog:
 ----------------------------------------------------------------
 
+  06-Mar-08 (1.7.1)
+    -- Advanced search (partial & relevance)
+    -- Search in hidden documents from menu
+    -- List of Ids limited to parent-documents ids in javascript
+    -- Code cleaning
   06-Jan-08 (1.7)
     -- Added custom config file
     -- Added list of parent-documents where to search
@@ -120,9 +125,18 @@ This is done automatically with the addJscript parameter unless you set it to 0.
     &AS_showResults [1 | 0] (optional)
         Show the results with the snippet. (For non-ajax search)
 
-    &useAllWords [ 1 | 0 ] (optional)
-      If you want only documents which contain ALL words in the search string, set to true
-      Otherwise, the search will return all pages with ONE or more of the search words. Default 0 (False))
+    &advSearch [ 'exactphrase' | 'allwords' | 'nowords' | 'oneword' ]
+        Advanced search    
+        - exactphrase : provides the documents which contain the exact phrase 
+        - allwords : provides the documents which contain all the words
+        - nowords : provides the documents which do not contain the words
+        - oneword : provides the document which contain at least one word [default] 
+
+    &hideMenu [ 0 | 1 | 2 ]    
+        Search in hidden documents from menu
+        - 0 : search only in documents visible from menu
+        - 1 : search only in documents hidden from menu
+        - 2 : search in hidden or visible documents from menu [default]
 
     &extract [1 | 0] (optional)
         Show the search words highlighting.
@@ -367,5 +381,8 @@ var _base = 'assets/snippets/ajaxSearch/';
 
     Modx Community forum >> support >> Repository Items Support >> support/comments for ajaxSearch
     
-    http://modxcms.com/forums/index.php?topic=5357.345
+    http://modxcms.com/AjaxSearch-490.html
     
+2. Documentation : http://wiki.modxcms.com/index.php/AjaxSearch
+
+3. Demo site : http://www.modx.wangba.fr

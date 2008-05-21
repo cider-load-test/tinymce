@@ -6,25 +6,25 @@
         Ajax-driven & Flexible Search form
 
   Version:
-        1.7.0.2
+        1.7.1
 
   Created by:
-	    Jason Coward (opengeek - jason@opengeek.com)
-	    Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
-	    Ryan Thrash  (rthrash - ryan@vertexworks.com)
-	    
-	    Live Search by Thomas (Shadock)
-	    Fixes & Additions by identity/Perrine/mikkelwe
-	    Document selection from Ditto by Mark Kaplan
-	    
-	    Parts refactored and new features/fixes added by Coroico (coroico@wangba.fr)
-	    
+      Jason Coward (opengeek - jason@opengeek.com)
+      Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
+      Ryan Thrash  (rthrash - ryan@vertexworks.com)
+      
+      Live Search by Thomas (Shadock)
+      Fixes & Additions by identity/Perrine/mikkelwe
+      Document selection from Ditto by Mark Kaplan
+
+      Parts refactored and new features/fixes added by Coroico (coroico@wangba.fr)
+
   Copyright & Licencing:
   ----------------------
   GNU General Public License (GPL) (http://www.gnu.org/copyleft/gpl.html)
 
   Originally based on the FlexSearchForm snippet created by jaredc (jaredc@honeydewdesign.com)
-  
+
 ----------------------------------------------------------------
 :: Description
 ----------------------------------------------------------------
@@ -32,13 +32,13 @@
     The AjaxSearch snippet is an enhanced version of the original FlexSearchForm
     snippet for MODx. This snippet adds AJAX functionality on top of the robust 
     content searching.
-    
+
     - search in title, description, content and TVs of documents
     - search in a subset of documents
     - highlighting of searchword in the results returned
-   
+
     It could works in two modes:
-    
+
     ajaxSearch mode : 
     - Search results displayed in current page through AJAX request
     - Multiple search options including live search and non-AJAX option
@@ -51,29 +51,29 @@
     - customize the paginating of results
     - works without JS enabled as FlexSearchForm
     - designed to load only the required FSF code
-    
+
 
 MORE : See the ajaxSearch.readme.txt file for more informations
-    
+
 ---------------------------------------------------------------- */
 
 global $modx;
 
-define('VERSION', "1.7.0.2");
+define('VERSION', "1.7.1");
 
 // check version files
 if (!defined ('AS_VERSION')){
-	$output = '<h3>AjaxSearch version is not defined. <br />Please check the snippet code in MODx manager.</h3>'; 
-	return;
+  $output = '<h3>AjaxSearch version is not defined. <br />Please check the snippet code in MODx manager.</h3>'; 
+  return;
 }
 elseif (AS_VERSION != VERSION) {
   $output = '<h3>AjaxSearch version is obsolete. <br />Please check the snippet code in MODx manager.</h3>';
   return;
-} 
+}
 elseif (!defined ('AS_PATH')){
-	$output = 'AjaxSearch setup path is not defined. <br />Please check the snippet code in MODx manager.</h3>'; 
-	return;
-} 
+  $output = 'AjaxSearch setup path is not defined. <br />Please check the snippet code in MODx manager.</h3>'; 
+  return;
+}
 
 //-------------------------------------------------------------------------------------------------
 // CONFIGURE - GENERAL SNIPPET SETUP OPTIONS
@@ -97,14 +97,15 @@ $ajaxSearch = isset($ajaxSearch) ? $ajaxSearch : 1;
 // This option allows you to decide to use a faster, relevance sorted search ('relevance')
 // which WILL NOT inlclude partial matches. Or use a slower, but more inclusive search ('partial') 
 // that will include partial matches. Results will NOT be sorted based on relevance.
-// This option contributed by Rich from Snappy Graffix Media to allow partial matching
-// and LIKE matching of the search term. sam@snappygraffix.com
-$searchStyle = 'partial';
+$searchStyle = isset($searchStyle) ? $searchStyle : 'partial';
 
-// $useAllWords [ 1 | 0 ]
-// If you want only documents which contain ALL words in the search string, set to true. 
-// Otherwise, the search will return all pages with ONE or more of the search words (which can be a LOT more pages).
-$useAllWords = isset($useAllWords) ? $useAllWords : 0;
+// $advSearch [ 'exactphrase' | 'allwords' | 'nowords' | 'oneword' ]
+// Advanced search    
+// - exactphrase : provides the documents which contain the exact phrase 
+// - allwords : provides the documents which contain all the words
+// - nowords : provides the documents which do not contain the words
+// - oneword : provides the document which contain at least one word [default]
+$advSearch = isset($advSearch) ? $advSearch : 'oneword';
 
 // $stripHtml [ 0 | 1 ]
 // Allow HTML characters in the search? Probably not.
@@ -123,9 +124,10 @@ $stripSnippets = 1;
 // $minChars [ int ]
 // Minimum number of characters to require for a word to be valid for searching.
 // MySQL will typically NOT search for words with less than 4 characters (relevance mode). 
-// If you have $useAllWords = true and a three or fewer word appears in the search string,
-// the results will always be 0. Setting this drops those words from the search in 
-// THAT CIRCUMSTANCE ONLY (relevance mode, useAllWords=true).
+// If you have $advSearch = 'allwords', 'oneword' or 'nowords' and a three or 
+// fewer letter words appears in the search string, the results will always be 0. 
+// Setting this drops those words from the search in THAT CIRCUMSTANCE ONLY 
+// (relevance mode, advsearch = 'allwords', 'oneword' or 'nowords')
 $minChars = isset($minChars) ? $minChars : 4;
 
 // $AS_showForm [0 | 1]
@@ -177,9 +179,15 @@ $parents = isset($parents) ? $parents : false;
  
 // IDs of documents where to do the search
 $documents = isset($documents) ? $documents : false;
- 
+
 // Number of levels deep to retrieve documents
 $depth = isset($depth) ? $depth : 10;
+
+// Search in hidden documents from menu. [0 | 1 | 2]
+// 0 - search only in documents visible from menu
+// 1 - search only in documents hidden from menu
+// 2 - search in hidden or visible documents from menu [default]
+$hideMenu = isset($hideMenu) ? $hideMenu : 2;
 
 //-------------------------------------------------------------------------------------------------
 // CONFIGURE - Ajax SNIPPET SETUP OPTIONS
@@ -239,9 +247,9 @@ include AS_PATH."lang/{$as_language}.inc.php";
 
 // include other language file if set
 if(($language != '') && ($language != $as_language)) {
-	if(file_exists(AS_PATH."lang/{$language}.inc.php"))
-		include AS_PATH."lang/".$language.".inc.php";
-		$as_language = $language;
+  if(file_exists(AS_PATH."lang/{$language}.inc.php"))
+    include AS_PATH."lang/".$language.".inc.php";
+    $as_language = $language;
 }
 
 // check some parameters
@@ -249,20 +257,20 @@ if ($extractLength < EXTRACT_MIN) $extractLength = EXTRACT_MIN;
 if ($extractLength > EXTRACT_MAX) $extractLength = EXTRACT_MAX;
 if ($opacity < 0.) $opacity = 0.;
 if ($opacity > 1.) $opacity = 1.;
+if (($hideMenu != 0) and ($hideMenu != 1) and ($hideMenu != 2)) $hideMenu = 2;
 
 $liveSearch = $ajaxSearchType;
 
 // Internal variable which holds the set of IDs where to look for
-$IDs = ($idType == "parents") ? $parents : $documents;
-$listIDs = getListIDs($IDs, $idType, $depth);
+$idgrp = ($idType == "parents") ? $parents : $documents;
 
 // establish results page
 if (isset($AS_landing)) { // set in snippet
-	$searchAction = "[~".$AS_landing."~]";
+  $searchAction = "[~".$AS_landing."~]";
 } elseif ($resultsPage > 0) { // locally set
-	$searchAction = "[~".$resultsPage."~]";
+  $searchAction = "[~".$resultsPage."~]";
 } else { //otherwise
-	$searchAction = "[~".$modx->documentIdentifier."~]";
+  $searchAction = "[~".$modx->documentIdentifier."~]";
 }
 
 // Initialize search string
@@ -270,19 +278,19 @@ $searchString = '';
 
 // CLEAN SEARCH STRING
 if ( isset($_POST['search']) || isset($_GET['AS_search']) || isset($_GET['FSF_search'])) {
-	// Prefer post to get
-	if (isset($_POST['search'])) {
-		$searchString = $_POST['search'];
-	} elseif (isset($_GET['AS_search'])) {
-		$searchString = html_entity_decode($_GET['AS_search']);
-	} else {
-		// Code to make tag cloud snippet work with this search
-		$searchString = html_entity_decode($_GET['FSF_search']);
-	}
+  // Prefer post to get
+  if (isset($_POST['search'])) {
+    $searchString = $_POST['search'];
+  } elseif (isset($_GET['AS_search'])) {
+    $searchString = html_entity_decode($_GET['AS_search']);
+  } else {
+    // Code to make tag cloud snippet work with this search
+    $searchString = html_entity_decode($_GET['FSF_search']);
+  }
 
-	//**********************************************************************************************************************
-	$searchString = initSearchString($searchString,$stripHtml,$stripSnip,$stripSnippets,$useAllWords,$searchStyle,$minChars,$ajaxSearch);
-	//**********************************************************************************************************************
+  //**********************************************************************************************************************
+  $searchString = initSearchString($searchString,$stripHtml,$stripSnip,$stripSnippets,$searchStyle,$advSearch,$minChars);
+  //**********************************************************************************************************************
 } // End cleansing search string
 
 // check querystring
@@ -294,21 +302,20 @@ $offset = (isset($_GET['AS_offset']))? $_GET['AS_offset'] : 0;
 // initialize output
 $SearchForm = '';
 $introMessage = '';
-$useAllWords = ($useAllWords) ? 1 : 0;
 
 if ($docgrp = $modx->getUserDocGroups()) {
-	$docgrp = implode(",", $docgrp);
+  $docgrp = implode(",", $docgrp);
 }
 
 if ($ajaxSearch) {
-	$searchFormId = 'id="ajaxSearch_form" ';
-	//Adding the javascript libraries to the header
-	if ($addJscript) {
-		$modx->regClientStartupScript($jsMooTools);
-	}
-	$jsInclude = AS_SPATH.'js/ajaxSearch.js';
-	$modx->regClientStartupScript($jsInclude);
-	
+  $searchFormId = 'id="ajaxSearch_form" ';
+  //Adding the javascript libraries to the header
+  if ($addJscript) {
+    $modx->regClientStartupScript($jsMooTools);
+  }
+  $jsInclude = AS_SPATH.'js/ajaxSearch.js';
+  $modx->regClientStartupScript($jsInclude);
+
   $jsVars = <<<EOD
 <!-- start AjaxSearch header -->
 <script type="text/javascript">
@@ -319,8 +326,8 @@ opacity = $opacity;
 stripHtml = $stripHtml;
 stripSnip = $stripSnip;
 stripSnippets = $stripSnippets;
-useAllWords = $useAllWords;
 searchStyle = '$searchStyle';
+advSearch = '$advSearch';
 minChars = $minChars;
 ajaxMax = $ajaxMax;
 showMoreResults = $showMoreResults;
@@ -329,206 +336,211 @@ extract = $extract;
 extractLength = $extractLength;
 liveSearch = $liveSearch;
 docgrp = '$docgrp';
+idgrp = '$idgrp';
+idType = '$idType';
+depth = '$depth';
 highlightResult = $highlightResult;
-listIDs = '$listIDs';
+hideMenu = $hideMenu;
 </script>
 <!-- end AjaxSearch header -->
 EOD;
 
-	$modx->regClientStartupScript($jsVars);
+  $modx->regClientStartupScript($jsVars);
 } else {
-	$searchFormId = '';
+  $searchFormId = '';
 }
 
 // establish form
 if (($validSearch && $AS_showForm) || $AS_showForm){
-	$formPlaceholders = array(
-		'[+as.formId+]' => $searchFormId,
-		'[+as.formAction+]' => $searchAction,
-		'[+as.inputValue+]' => ($searchString == '' && $_lang['as_boxText'] != '') ? $_lang['as_boxText'] : $searchString,
-		'[+as.inputOptions+]' => ($_lang['as_boxText']) ? ' onfocus="this.value=(this.value==\''.$_lang['as_boxText'].'\')? \'\' : this.value ;"' : '',
-		'[+as.submitText+]' => $_lang['as_searchButtonText'],
-	);
-	
-	$finalSearchForm = str_replace( array_keys( $formPlaceholders ), array_values( $formPlaceholders ), $asTemplates['form'] );
+  $formPlaceholders = array(
+    '[+as.formId+]' => $searchFormId,
+    '[+as.formAction+]' => $searchAction,
+    '[+as.inputValue+]' => ($searchString == '' && $_lang['as_boxText'] != '') ? $_lang['as_boxText'] : $searchString,
+    '[+as.inputOptions+]' => ($_lang['as_boxText']) ? ' onfocus="this.value=(this.value==\''.$_lang['as_boxText'].'\')? \'\' : this.value ;"' : '',
+    '[+as.submitText+]' => $_lang['as_searchButtonText'],
+  );
+
+  $finalSearchForm = str_replace( array_keys( $formPlaceholders ), array_values( $formPlaceholders ), $asTemplates['form'] );
 } else {
-	$finalSearchForm = '';
+  $finalSearchForm = '';
 }
 
 $finalResults = '';
 if ($AS_showResults) {
-	if ($validSearch) {
+  if ($validSearch) {
+    // get the Ids
+    $listIDs = getListIDs($idgrp, $idType, $depth);
     // get the record set with results
-	 $rs = doSearch($searchString,$searchStyle,$useAllWords,$ajaxSearch,$docgrp,$listIDs);
+   $rs = doSearch($searchString,$searchStyle,$advSearch,$docgrp,$listIDs,$hideMenu);
 
-	 $limit = $modx->recordCount($rs);
-	 $search = explode(" ", $searchString);
-		if($limit > 0) {
-			// pagination
-			if ($grabMax > 0){
-				$numResultPages = ceil($limit/$grabMax);
-				$resultPagingText = ($limit>$grabMax) ? $_lang['as_paginationTextMultiplePages'] : $_lang['as_paginationTextSinglePage'] ;
-				$resultPageLinkNumber = 1;
-				$resultPageLinks = '';
-				for ( $nrp = 0; $nrp < $limit && $limit > $grabMax; $nrp += $grabMax ){
-					if ($offset == ($resultPageLinkNumber-1)*$grabMax){
-						$resultPageUrl = $resultPageLinkNumber;
-						$usePageTemplate = 'pagingLinksCurrent';
-					} else {
-						$resultPageUrl = $modx->makeUrl($modx->documentIdentifier, '', 'AS_offset=' . $nrp . '&AS_search=' . urlencode($searchString));
-						$usePageTemplate = 'pagingLinks';
-					}
-					
-					$useSeperator = ($nrp + $grabMax < $limit) ? $pageLinkSeparator : '' ;
-					
-					$pageLinkPlaceholders = array(
-						'[+as.pagingLink+]' => $resultPageUrl,
-						'[+as.pagingText+]' => $resultPageLinkNumber,
-						'[+as.pagingSeperator+]' => $useSeperator,
-					);
-					
-					$resultPageLinks .= str_replace(array_keys($pageLinkPlaceholders),array_values($pageLinkPlaceholders),$asTemplates[$usePageTemplate]);
-					$resultPageLinkNumber++;
-				}
-				
-				$pageLinkPlaceholders = array(
-					'[+as.pagingText+]' => $resultPagingText,
-					'[+as.pagingLinks+]' => $resultPageLinks,
-				);
-				
-				$resultPageLinksFinal = str_replace(array_keys($pageLinkPlaceholders),array_values($pageLinkPlaceholders),$asTemplates['pagingLinksOuter']);
-				
-				$resultsFoundText = ($limit > 1)? $_lang['as_resultsFoundTextMultiple'] : $_lang['as_resultsFoundTextSingle'] ;
-				if ($extract) {
-					$hits=1;
-					$searchwords='';
-					foreach ($search as $words) {
-						$searchwords .= '<span class="ajaxSearch_highlight ajaxSearch_highlight'.$hits.'">'.$words.'</span>&nbsp;';
-						$hits++;
-					}
-					// Remove trailing '&nbsp;'
-					$searchwords = substr($searchwords, 0, strlen($searchwords) -6);
-					$resultsFoundText = sprintf($resultsFoundText,$limit,$searchwords);
-				} else {
-					$resultsFoundText = sprintf($resultsFoundText,$limit,$searchString);
-				}
-				
-				$resultInfoPlaceholders = array(
-					'[+as.resultInfoText+]' => $resultsFoundText,
-				);
-				
-				$resultInfo = str_replace(array_keys($resultInfoPlaceholders),array_values($resultInfoPlaceholders),$asTemplates['resultsInfo']);		
-			} // end if grabMax
+   $limit = $modx->recordCount($rs);
+   $search = explode(" ", $searchString);
+    if($limit > 0) {
+      // pagination
+      if ($grabMax > 0){
+        $numResultPages = ceil($limit/$grabMax);
+        $resultPagingText = ($limit>$grabMax) ? $_lang['as_paginationTextMultiplePages'] : $_lang['as_paginationTextSinglePage'] ;
+        $resultPageLinkNumber = 1;
+        $resultPageLinks = '';
+        for ( $nrp = 0; $nrp < $limit && $limit > $grabMax; $nrp += $grabMax ){
+          if ($offset == ($resultPageLinkNumber-1)*$grabMax){
+            $resultPageUrl = $resultPageLinkNumber;
+            $usePageTemplate = 'pagingLinksCurrent';
+          } else {
+            $resultPageUrl = $modx->makeUrl($modx->documentIdentifier, '', 'AS_offset=' . $nrp . '&AS_search=' . urlencode($searchString));
+            $usePageTemplate = 'pagingLinks';
+          }
 
-			// search results
-			$useLimit = ($grabMax > 0)? $offset+$grabMax : $limit;
-			$allResults = '';
-			for ($y = $offset; ($y < $useLimit) && ($y<$limit); $y++) {
-				$moveToRow = mysql_data_seek($rs,$y);
-				$SearchFormsrc=$modx->db->getRow($rs);
-				if ($extract) {
-					$highlightClass = 'ajaxSearch_highlight';
-					$text=$SearchFormsrc['content'];
-					$count=1;
-					$summary='';
-					$text = PrepareSearchContent( $text );
-					foreach ($search as $searchTerm) {
-						if (preg_match('/' . preg_quote($searchTerm) . '/i', $text)) {
-							$toAdd = SmartSubstr( $text , $extractLength, $searchTerm );
-							$summary .= preg_replace( '/' . preg_quote( $searchTerm, '/' ) . '/i', '<span class="ajaxSearch_highlight ajaxSearch_highlight'.$count.'">\0</span>', $toAdd ) . ' ';
-						}
-						$highlightClass .= ' ajaxSearch_highlight'.$count;
-						$count++;
-					}
-					$text=$summary;
-				}
-				
-				if ($highlightResult) {
-					if (!$extract) {
-						$highlightClass = 'ajaxSearch_highlight';
-						$count=1;
-						foreach ($search as $searchTerm) {
-							$highlightClass .= ' ajaxSearch_highlight'.$count;
-							$count++;
-						}
-					}
-				
-					$searchFormLink = $modx->makeUrl($SearchFormsrc['id'],'','searched='.urlencode($searchString).'&amp;highlight='.urlencode($highlightClass));
-				} else {
-					$searchFormLink = $modx->makeUrl($SearchFormsrc['id']);
-				}
-			
-				if ($extract) {
-					$extractPlaceholders = array(
-						'[+as.extractClass+]' => 'ajaxSearch_extract',
-						'[+as.extract+]' => $text,
-					);
-					$resultExtract = str_replace(array_keys($extractPlaceholders),array_values($extractPlaceholders),$asTemplates['extractWrapper']);
-				} else {
-					$resultExtract = '';
-				}
+          $useSeperator = ($nrp + $grabMax < $limit) ? $pageLinkSeparator : '' ;
+
+          $pageLinkPlaceholders = array(
+            '[+as.pagingLink+]' => $resultPageUrl,
+            '[+as.pagingText+]' => $resultPageLinkNumber,
+            '[+as.pagingSeperator+]' => $useSeperator,
+          );
+
+          $resultPageLinks .= str_replace(array_keys($pageLinkPlaceholders),array_values($pageLinkPlaceholders),$asTemplates[$usePageTemplate]);
+          $resultPageLinkNumber++;
+        }
+
+        $pageLinkPlaceholders = array(
+          '[+as.pagingText+]' => $resultPagingText,
+          '[+as.pagingLinks+]' => $resultPageLinks,
+        );
+
+        $resultPageLinksFinal = str_replace(array_keys($pageLinkPlaceholders),array_values($pageLinkPlaceholders),$asTemplates['pagingLinksOuter']);
+
+        $resultsFoundText = ($limit > 1)? $_lang['as_resultsFoundTextMultiple'] : $_lang['as_resultsFoundTextSingle'] ;
+        if ($extract) {
+          $hits=1;
+          $searchwords='';
+          foreach ($search as $words) {
+            $searchwords .= '<span class="ajaxSearch_highlight ajaxSearch_highlight'.$hits.'">'.$words.'</span>&nbsp;';
+            $hits++;
+          }
+          // Remove trailing '&nbsp;'
+          $searchwords = substr($searchwords, 0, strlen($searchwords) -6);
+          $resultsFoundText = sprintf($resultsFoundText,$limit,$searchwords);
+        } else {
+          $resultsFoundText = sprintf($resultsFoundText,$limit,$searchString);
+        }
+
+        $resultInfoPlaceholders = array(
+          '[+as.resultInfoText+]' => $resultsFoundText,
+        );
+
+        $resultInfo = str_replace(array_keys($resultInfoPlaceholders),array_values($resultInfoPlaceholders),$asTemplates['resultsInfo']);    
+      } // end if grabMax
+
+      // search results
+      $useLimit = ($grabMax > 0)? $offset+$grabMax : $limit;
+      $allResults = '';
+      for ($y = $offset; ($y < $useLimit) && ($y<$limit); $y++) {
+        $moveToRow = mysql_data_seek($rs,$y);
+        $SearchFormsrc=$modx->db->getRow($rs);
+        if ($extract) {
+          $highlightClass = 'ajaxSearch_highlight';
+          $text=$SearchFormsrc['content'];
+          $count=1;
+          $summary='';
+          $text = PrepareSearchContent( $text );
+          foreach ($search as $searchTerm) {
+            if (preg_match('/' . preg_quote($searchTerm) . '/i', $text)) {
+              $toAdd = SmartSubstr( $text , $extractLength, $searchTerm );
+              $summary .= preg_replace( '/' . preg_quote( $searchTerm, '/' ) . '/i', '<span class="ajaxSearch_highlight ajaxSearch_highlight'.$count.'">\0</span>', $toAdd ) . ' ';
+            }
+            $highlightClass .= ' ajaxSearch_highlight'.$count;
+            $count++;
+          }
+          $text=$summary;
+        }
+        
+        if ($highlightResult) {
+          if (!$extract) {
+            $highlightClass = 'ajaxSearch_highlight';
+            $count=1;
+            foreach ($search as $searchTerm) {
+              $highlightClass .= ' ajaxSearch_highlight'.$count;
+              $count++;
+            }
+          }
+        
+          $searchFormLink = $modx->makeUrl($SearchFormsrc['id'],'','searched='.urlencode($searchString).'&amp;highlight='.urlencode($highlightClass));
+        } else {
+          $searchFormLink = $modx->makeUrl($SearchFormsrc['id']);
+        }
+
+        if ($extract) {
+          $extractPlaceholders = array(
+            '[+as.extractClass+]' => 'ajaxSearch_extract',
+            '[+as.extract+]' => $text,
+          );
+          $resultExtract = str_replace(array_keys($extractPlaceholders),array_values($extractPlaceholders),$asTemplates['extractWrapper']);
+        } else {
+          $resultExtract = '';
+        }
 
         $desc = stripHtml($SearchFormsrc['description']);
-				if ($desc != '') {
-					$descPlaceholders = array(
-						'[+as.descriptionClass+]' => 'ajaxSearch_resultDescription',
-						'[+as.description+]' => $desc,
-					);
-					$resultDesc = str_replace(array_keys($descPlaceholders),array_values($descPlaceholders),$asTemplates['descriptionWrapper']);
-				} else {
-					$resultDesc = '';
-				}
-				
-				$resultPlaceholders = array(
-					'[+as.resultClass+]' => 'ajaxSearch_result',
-					'[+as.resultLinkClass+]' => 'ajaxSearch_resultLink',
-					'[+as.resultLink+]' => $searchFormLink,
-					'[+as.longtitle+]' => stripHtml($SearchFormsrc['longtitle']),
-					'[+as.pagetitle+]' => stripHtml($SearchFormsrc['pagetitle']),
-					'[+as.description+]' => $resultDesc,
-					'[+as.extract+]' => $resultExtract,
-				);
-				
-				$allResults .= str_replace(array_keys($resultPlaceholders),array_values($resultPlaceholders),$asTemplates['result']);
-			}
-			
-			$finalPlaceholders = array(
-				'[+as.results+]' => $allResults,
-				'[+as.paging+]' => $resultPageLinksFinal,
-				'[+as.resultInfo+]' => $resultInfo,
-			);
-			
-			$finalResults .= str_replace(array_keys($finalPlaceholders),array_values($finalPlaceholders),$asTemplates['no_ajax_outer']);
-		} else {
-			$noResultsPlaceholder = array(
-				'[+as.noResultClass+]' => 'ajaxSearch_resultsIntroFailure',
-				'[+as.noResultText+]' => $_lang['as_resultsIntroFailure'],
-			);
-			$finalResults .= str_replace(array_keys($noResultsPlaceholder),array_values($noResultsPlaceholder),$asTemplates['noResults']);
-		} // end if records found
-	} // end if validSearch
+        if ($desc != '') {
+          $descPlaceholders = array(
+            '[+as.descriptionClass+]' => 'ajaxSearch_resultDescription',
+            '[+as.description+]' => $desc,
+          );
+          $resultDesc = str_replace(array_keys($descPlaceholders),array_values($descPlaceholders),$asTemplates['descriptionWrapper']);
+        } else {
+          $resultDesc = '';
+        }
+
+        $resultPlaceholders = array(
+          '[+as.resultClass+]' => 'ajaxSearch_result',
+          '[+as.resultLinkClass+]' => 'ajaxSearch_resultLink',
+          '[+as.resultLink+]' => $searchFormLink,
+          '[+as.longtitle+]' => stripHtml($SearchFormsrc['longtitle']),
+          '[+as.pagetitle+]' => stripHtml($SearchFormsrc['pagetitle']),
+          '[+as.description+]' => $resultDesc,
+          '[+as.extract+]' => $resultExtract,
+        );
+        
+        $allResults .= str_replace(array_keys($resultPlaceholders),array_values($resultPlaceholders),$asTemplates['result']);
+      }
+
+      $finalPlaceholders = array(
+        '[+as.results+]' => $allResults,
+        '[+as.paging+]' => $resultPageLinksFinal,
+        '[+as.resultInfo+]' => $resultInfo,
+      );
+
+      $finalResults .= str_replace(array_keys($finalPlaceholders),array_values($finalPlaceholders),$asTemplates['no_ajax_outer']);
+    } else {
+      $noResultsPlaceholder = array(
+        '[+as.noResultClass+]' => 'ajaxSearch_resultsIntroFailure',
+        '[+as.noResultText+]' => $_lang['as_resultsIntroFailure'],
+      );
+      $finalResults .= str_replace(array_keys($noResultsPlaceholder),array_values($noResultsPlaceholder),$asTemplates['noResults']);
+    } // end if records found
+  } // end if validSearch
   else if (!$validSearch && isset($_POST['sub'])) {
-		// message to show if search was performed but for something invalid
-		$noResultsPlaceholder = array(
-			'[+as.noResultClass+]' => 'ajaxSearch_resultsIntroFailure',
-			'[+as.noResultText+]' => $_lang['as_resultsIntroFailure'],
-		);
-		$finalResults .= str_replace(array_keys($noResultsPlaceholder),array_values($noResultsPlaceholder),$asTemplates['noResults']);
-	} 
+    // message to show if search was performed but for something invalid
+    $noResultsPlaceholder = array(
+      '[+as.noResultClass+]' => 'ajaxSearch_resultsIntroFailure',
+      '[+as.noResultText+]' => $_lang['as_resultsIntroFailure'],
+    );
+    $finalResults .= str_replace(array_keys($noResultsPlaceholder),array_values($noResultsPlaceholder),$asTemplates['noResults']);
+  }
   else { // init the input field
-		$introMessage = str_replace('[+as.introMessage+]',$_lang['as_introMessage'],$asTemplates['introMessage']);
-	} // end if not validSearch
+    $introMessage = str_replace('[+as.introMessage+]',$_lang['as_introMessage'],$asTemplates['introMessage']);
+  } // end if not validSearch
 } // end if showResults
 
 if ($ajaxSearch) {
   $finalResults = '<div id="ajaxSearch_output" style="opacity:0;filter:alpha(opacity=0);-moz-opacity:0.;" > </div>';
-	$introMessage = '';
+  $introMessage = '';
 }
 
 $finalPlaceholders = array(
-	'[+as.form+]' => $finalSearchForm,
-	'[+as.intro+]' => $introMessage,
-	'[+as.results+]' => $finalResults,
+  '[+as.form+]' => $finalSearchForm,
+  '[+as.intro+]' => $introMessage,
+  '[+as.results+]' => $finalResults,
 );
 
 $output .= str_replace(array_keys($finalPlaceholders),array_values($finalPlaceholders),$asTemplates['layout']);
