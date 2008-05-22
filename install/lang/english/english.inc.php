@@ -158,14 +158,14 @@ $_lang["errors"] = 'errors'; //Plural form
 $_lang["please_correct_error"] = '. Please correct the error';
 $_lang["please_correct_errors"] = '. Please correct the errors'; //Plural form
 $_lang["and_try_again"] = ', and try again. If you need help figuring out how to fix the problem';
-$_lang["and_try_again_plural"] = ', and try again. If you need help figuring out how to fix the problems'; //Plural form$_lang["checking_mysql_version"] = 'Checking MySQL version: ';
+$_lang["and_try_again_plural"] = ', and try again. If you need help figuring out how to fix the problems'; //Plural form
+$_lang["checking_mysql_version"] = 'Checking MySQL version: ';
 $_lang["mysql_version_is"] = ' Your MySQL version is: ';
 $_lang["mysql_5051_warning"] = 'There are known issues with MySQL 5.0.51. It is recommended that you upgrade before continuing.';
 $_lang["mysql_5051"] = ' MySQL server version is 5.0.51!';
 $_lang["checking_mysql_strict_mode"] = 'Checking MySQL for strict mode: ';
 $_lang["strict_mode_error"] = 'MODx requires that strict mode be disabled. You can set the MySQL mode by editing the my.cnf file or contact your server administrator.';
 $_lang["strict_mode"] = ' MySQL server is in strict mode!';
-
 $_lang["visit_forum"] = ', visit the <a href="http://www.modxcms.com/forums/" target="_blank">Operation MODx Forums</a>.';
 $_lang["testing_connection"] = 'Testing connection...';
 $_lang["btnback_value"] = 'Back';
