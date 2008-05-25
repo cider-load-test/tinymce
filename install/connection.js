@@ -74,7 +74,7 @@ function setColor(){
     col = $('database_collation');
     ss = document.getElementById('serverstatus');
     ssv = ss.innerHTML;
-    if (ssv.indexOf("passed") >=0) {
+    if (ssv.indexOf(passed) >=0) {
         col.setStyle('background-color', '#9CCD00');
         col.setStyle('color', '#0000CD');
     }

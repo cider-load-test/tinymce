@@ -48,7 +48,10 @@ if ($upgradeable && (!isset ($database_connection_charset) || empty($database_co
 ?>
 <script type="text/javascript" src="connection.mootools.1.11.js"></script>
 <script type="text/javascript" src="connection.js"></script>
-<script type="text/javascript">language ='<?php echo $install_language?>'</script>
+<script type="text/javascript">
+language ='<?php echo $install_language?>';
+passed ='<?php echo $_lang["status_passed_server"]?>';
+</script>
 
 <form name="install" action="index.php?action=options" method="post">
   <div>
