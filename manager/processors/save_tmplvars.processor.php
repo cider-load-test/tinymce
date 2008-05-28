@@ -181,9 +181,7 @@ function saveTemplateAccess() {
     while( $row = $modx->db->getRow( $getRank ) ) {
     $getRankArray[$row['templateid']] = $row['rank'];
     }
-
-    $getRankArray = array_combine($getRankArrayKey,$getRankArrayValue);
-    
+   
 	
 	mysql_query("DELETE FROM $tbl WHERE tmplvarid = $id");
 	for($i=0;$i<count($templates);$i++){
