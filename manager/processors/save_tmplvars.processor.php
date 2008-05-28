@@ -174,14 +174,12 @@ function saveTemplateAccess() {
 	// update template selections
 	$tbl = "$dbase.`".$table_prefix."site_tmplvar_templates`";
 	
-	$getRankArrayKey = array();
-    $getRankArrayValue = array();
+    $getRankArray = array();
 
     $getRank = $modx->db->select("templateid, rank", $tbl, "tmplvarid=$id");
 
     while( $row = $modx->db->getRow( $getRank ) ) {
-    array_push($getRankArrayKey, $row[templateid]);
-    array_push($getRankArrayValue, $row[rank]);
+    $getRankArray[$row['templateid']] = $row['rank'];
     }
 
     $getRankArray = array_combine($getRankArrayKey,$getRankArrayValue);
