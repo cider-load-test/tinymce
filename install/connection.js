@@ -44,7 +44,8 @@ window.addEvent('domready', function(){
             database_name: database_name,
             tableprefix: tableprefix,
             database_collation: database_collation,
-            language: language
+            language: language,
+            installMode: installMode
         });
 
         new Ajax(url, { postBody: pars, update: $('databasestatus') } ).request();

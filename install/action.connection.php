@@ -50,6 +50,7 @@ if ($upgradeable && (!isset ($database_connection_charset) || empty($database_co
 <script type="text/javascript" src="connection.js"></script>
 <script type="text/javascript">
 language ='<?php echo $install_language?>';
+installMode ='<?php echo $installMode ?>';
 passed ='<?php echo $_lang["status_passed_server"]?>';
 </script>
 
