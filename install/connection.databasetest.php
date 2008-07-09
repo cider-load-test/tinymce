@@ -16,7 +16,7 @@ else {
     $tableprefix = $_POST['tableprefix'];
     $database_collation = $_POST['database_collation'];
 
-    if (!@ mysql_select_db(str_replace("`", "", $database_name, $conn))) {
+    if (!@ mysql_select_db(str_replace("`", "", $database_name), $conn)) {
         // create database
         $database_charset = substr($database_collation, 0, strpos($database_collation, '_'));
         $query = "CREATE DATABASE ".$database_name." CHARACTER SET ".$database_charset." COLLATE ".$database_collation.";";
