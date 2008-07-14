@@ -736,7 +736,7 @@ function saveMETAKeywords($id) {
 				'content_id' => $id,
 				'keyword_id' => $kwid
 			);
-			$modx->db->insert($flds, $tbl_keywords_xref);
+			$modx->db->insert($flds, $tbl_keyword_xref);
 		}
 		// meta tags - remove old tags first
 		$modx->db->delete($tbl_site_content_metatags, "content_id='$id'");
