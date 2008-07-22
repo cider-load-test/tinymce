@@ -2,12 +2,32 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2-rc1 (rev 3708 - May 17, 2008)
+MODx 0.9.6.2-rc2 (rev 3840 - July 14, 2008)
 ====================================
+* [#MODX-164] The keywords cannot be saved on manager.  See also, FS#1055 in old bug tracker.
+* [#MODX-159] installer style fix
+* [#MODX-183] fixes database creation problem - fix provided by sottwell
+* Updated TinyMCE to v3.1.0.1a
+* Updated Russian language files (thanks to Safronovich Victor)
+* Additional fix for [#MODX-101] so that any existing document group/document relationships are actually removed from the database if the 'public access' permission is selected.
+* [#MODX-155] fix 'Allowed Days' checkboxes for Manager users
+* [#MODX-153] - avoid table prefix when installMode = 3
+* action.language.php:mix of </div></form>, action.license.php: useless </span> tag, action.summary.php: useless </p> tag
+* [#MODX-152] Fixed. Advanced Upgrade Install doesn't work
+* Update to 0.9.6.2 the $module_version variable for a correct version label in the installer
+* [#MODX-151] php4 fix - remove use of array_combine() when saving TVs
+* [#MODX-138] inherit language which selected by installer to manager
+* collation list highlighting issue with non-english languages fixed and tested
+* Added/Updated Persian, Bulgarian, French, and Swedish manager localizations.
+* Added/Updated Persian, Norwegian, Bulgarian, German, and Swedish installer localizations
+* Updated Jot snippet to version 1.1.3
+* Updated Breadcrumbs snippet to 1.0.1
+* [#MODX-147] Fixed plus english and francais-utf8 language file updates.
+* [#MODX-141] Install mod to verify MySQL version + strict mode.
 * [FS#1064] Fix event name for OnDocUnpublished (3718)
 * Added plugin to show image previews in the manager for Image TVs as a tribute to Brett joining the team (3709)
 * [FS#863] — IE7 gives JS error on navigating away from/logging out of Manager (3705)
-* [MODX-124] Added a manager role for emptying the trash/permanently purging docs (rev 3682)
+* [#MODX-124] Added a manager role for emptying the trash/permanently purging docs (rev 3682)
 * Changing TVs no longer looses the sort order  on templates to which they're assigned (see http://modxcms.com/forums/index.php/topic,16090.msg146881.html#msg146881) (3622)
 * Insert CDATA Tags into Weblogin snippet code so it will validate (3622)
 * [#MODX-101] Fix ability to make document Public after it has been assigned to one or more Document Groups
@@ -72,8 +92,11 @@ MODx 0.9.6.2-rc1 (rev 3708 - May 17, 2008)
     - web_access_permissions_user_group_access (removed, no longer used)
 * Moved actions list out of switch() statement and into $GLOBALS['action_list']
 
-MODx 0.9.6.1 (rev 3078 - October 31, 2007)
+MODx 0.9.6.1 (rev 3118 - November 8, 2007)
 ====================================
+* [FS#892] — Upgrading: 0.9.5 -> 0.9.6 Snippets upgraded regardless of whether ticked. (3118)
+* Updated TinyMCE to version 2.1.2 of the plugin.  Fixes various issues and bugs as well as re-enables the linklist feature by default. (3086)
+* Removed extra line feeds/carraige returns after closing PHP tags in a few files. (3078)
 * [FS#773] WebLogin doesn't return to previous URL after 401. (3056)
 * [FS#929] weblogin error in SQL statement for active_users in STRICT sql_mode. (2987)
 * Replaced $this->postProcess() call at end of DocumentParser::sendRedirect() function to exit(). (2944)
