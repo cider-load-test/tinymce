@@ -185,7 +185,7 @@ $_lang["alert_enter_adminconfirm"] = 'The administrator password and the confirm
 $_lang["iagree_box"] = 'I agree to the terms set out in this license.';
 $_lang["btnclose_value"] = 'Close';
 $_lang["running_setup_script"] = 'Running setup script... please wait';
-$_lang["modx_footer1"] = '&copy; 2005-2007 the <a href="http://www.modxcms.com/" target="_blank" style="color: green; text-decoration:underline">MODx</a> Content Mangement Framework (CMF) project. All rights reserved. MODx is licensed under the GNU GPL.';
+$_lang["modx_footer1"] = '&copy; 2005-2008 the <a href="http://www.modxcms.com/" target="_blank" style="color: green; text-decoration:underline">MODx</a> Content Mangement Framework (CMF) project. All rights reserved. MODx is licensed under the GNU GPL.';
 $_lang["modx_footer2"] = 'MODx is free software.  We encourage you to be creative and make use of MODx in any way you see fit. Just make sure that if you do make changes and decide to redistribute your modified MODx, that you keep the source code free!';
 $_lang["setup_database"] = 'Setup will now attempt to setup the database:<br />';
 $_lang["setup_database_create_connection"] = 'Creating connection to the database: ';
