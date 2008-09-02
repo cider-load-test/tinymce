@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.2 (rev 3896 - August 8, 2008)
+MODx 0.9.6.2 (rev 4014 - September 2, 2008)
 ====================================
+* [#MODX-185] SET NAMES vs SET CHARACTER SET issue resolved; preferred method can be specified at installation.
 * [#MODX-176] XSS vulnerability in mcpuk resource browser; fixed problem in GET parameter "editorpath".
 * [#MODX-206] Vulnerability with CSRF(Cross Site Request Forgery); added configurable http referer validation option.
 * [#MODX-164] The keywords cannot be saved on manager.  See also, FS#1055 in old bug tracker.

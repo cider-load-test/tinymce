@@ -95,6 +95,7 @@ $_lang["connection_screen_database_test_connection"] = 'Click here to create you
 $_lang["connection_screen_database_name"] = 'Database name:';
 $_lang["connection_screen_table_prefix"] = 'Table prefix:';
 $_lang["connection_screen_collation"] = 'Collation:';
+$_lang["connection_screen_connection_method"] = 'Connection method:';
 $_lang["connection_screen_character_set"] = 'Connection character set:';
 $_lang["connection_screen_database_host"] = 'Database host:';
 $_lang["connection_screen_database_login"] = 'Database login name:';
