@@ -2,7 +2,6 @@
 $installMode = intval($_POST['installmode']);
 if ($installMode == 0) {
   $_POST['database_connection_charset'] = substr($_POST['database_collation'], 0, strpos($_POST['database_collation'], '_'));
-  $_POST['database_connection_method'] = 'SET CHARACTER SET';
 }
 elseif ($installMode == 1) {
   include "../manager/includes/config.inc.php";

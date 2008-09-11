@@ -88,7 +88,7 @@ passed ='<?php echo $_lang["status_passed_server"]?>';
     <input id="tableprefix" value="<?php echo isset($_POST['tableprefix']) ? $_POST['tableprefix']: $table_prefix ?>" name="tableprefix" />
   </div>
 <?php
-  if ($installMode == 2) {
+  if (($installMode == 0) || ($installMode == 2)) {
 ?>
   <div class="labelHolder"><label for="database_connection_method"><?php echo $_lang['connection_screen_connection_method']?></label>
     <div id="connection_method" name="connection_method">
