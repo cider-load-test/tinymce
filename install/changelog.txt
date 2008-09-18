@@ -2,6 +2,7 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
+* [#MODX-218] Fix broken image paths in Newspublisher snippet
 * [#MODX-266] Stop .svn folder appearing on help screen if MODx install was checked out from SVN
 * [FS#1076] Fix calendar JS error occurring if calendar TV name contains an hyphen
 
