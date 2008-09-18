@@ -2,6 +2,7 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
+* Fix MySQL Strict mode problem in save_content.processor.php
 * [FS#1038] Fix consistency of 'z=manprev' for document preview in manager code
 * [FS#1066] Fix problem with Newspublisher snippet and the calendar showing a 404 error when using the FormBlog chunk template
 * [FS#1062] Fix Weblogin snippet to correctly block users for period of time specified in system settings if they reach the maximum failed attempts

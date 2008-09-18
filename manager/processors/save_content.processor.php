@@ -467,9 +467,13 @@ switch ($actionToTake) {
 				$tvId = $value[0];
 				$tvVal = $value[1];
 
-				$tvChanges[] = '(\''.$tvIds[$tvId].'\', '.$tvId.', '.$id.', \''.mysql_escape_string($tvVal).'\')';
+				if ($tvIds[$tvId] == '') {
+					$tvIds[$tvId]="NULL";
+				}
+				$tvChanges[] = '('.$tvIds[$tvId].', '.$tvId.', '.$id.', \''.mysql_escape_string($tvVal).'\')';
 			}
 		}
+
 		// Only two queries to the db are made now - sirlancelot
 		if (!empty($deletions)) {
 			$sql = 'DELETE FROM '.$tbl_site_tmplvar_contentvalues.' WHERE id IN ('.implode(',', $deletions).')';
