@@ -595,7 +595,7 @@ switch ($actionToTake) {
 
 		// Mod by Raymond
 		if ($_POST['refresh_preview'] == '1')
-			$header = "Location: ../index.php?id=$id&manprev=z";
+			$header = "Location: ../index.php?id=$id&z=manprev";
 		else {
 			if ($_POST['stay'] != '') {
 				$id = $_REQUEST['id'];
