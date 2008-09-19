@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3 (rev 4109 - September 19, 2008)
 ====================================
+* [FS#1056] Fix error with updateMail JS function being called in header.inc.php
 * [#MODX-126] configure the URL of the Security Notice and modx News feeds in manager Site Settings - patch by Jesse Rochman and Magpie fix for Japanese language by MEGU
 * [#MODX-185] Problems with original SET NAMES vs SET CHARACTER SET patches resolved.
 * [#MODX-289] Fix was not merged into trunk for 0.9.6.2 release.
