@@ -2,6 +2,10 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
+MODx 0.9.6.3 (rev 4106 - September 18, 2008)
+====================================
+* [#MODX-185] Problems with original SET NAMES vs SET CHARACTER SET patches resolved.
+* [#MODX-289] Fix was not merged into trunk for 0.9.6.2 release.
 * Fix MySQL Strict mode problem in save_content.processor.php
 * [FS#1038] Fix consistency of 'z=manprev' for document preview in manager code
 * [FS#1066] Fix problem with Newspublisher snippet and the calendar showing a 404 error when using the FormBlog chunk template
