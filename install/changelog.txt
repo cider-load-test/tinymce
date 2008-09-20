@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3 (rev 4117 - September 19, 2008)
 ====================================
+* [#MODX-341] Ensure duplicate aliases have the number suffix properly incremented
 * [FS#1065] Fix problem with losing selected metatags when editing documents
 * Changing TVs no longer looses the sort order on templates to which they're assigned (revisited)
 * [FS#1056] Fix error with updateMail JS function being called in header.inc.php
