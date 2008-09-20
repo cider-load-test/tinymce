@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3 (rev 4109 - September 19, 2008)
 ====================================
+* Changing TVs no longer looses the sort order on templates to which they're assigned (revisited)
 * [FS#1056] Fix error with updateMail JS function being called in header.inc.php
 * [#MODX-126] configure the URL of the Security Notice and modx News feeds in manager Site Settings - patch by Jesse Rochman and Magpie fix for Japanese language by MEGU
 * [#MODX-185] Problems with original SET NAMES vs SET CHARACTER SET patches resolved.
@@ -59,7 +60,7 @@ MODx 0.9.6.2 (rev 4076 - September 15, 2008)
 * [#MODX-124] Added a manager role for emptying the trash/permanently purging docs (rev 3682)
 * Fix PHP-syntax-incuded parser error (3648)
 * Added a unique CSS ID to the form on multate_content_dyanamic.php to help with custom plugins (3646)
-* Changing TVs no longer looses the sort order  on templates to which they're assigned (see http://modxcms.com/forums/index.php/topic,16090.msg146881.html#msg146881) (3622)
+* Changing TVs no longer looses the sort order on templates to which they're assigned (see http://modxcms.com/forums/index.php/topic,16090.msg146881.html#msg146881) (3622)
 * Insert CDATA Tags into Weblogin snippet code so it will validate (3622)
 * [#MODX-101] Fix ability to make document Public after it has been assigned to one or more Document Groups
 * Patches to Ditto 2.1 to fix sorting and change default docs displayed number from 3 to "all" (see http://modxcms.com/forums/index.php/topic,23204.msg146176.html#msg146176) (3511)
