@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4109 - September 19, 2008)
+MODx 0.9.6.3 (rev 4117 - September 19, 2008)
 ====================================
+* [FS#1065] Fix problem with losing selected metatags when editing documents
 * Changing TVs no longer looses the sort order on templates to which they're assigned (revisited)
 * [FS#1056] Fix error with updateMail JS function being called in header.inc.php
 * [#MODX-126] configure the URL of the Security Notice and modx News feeds in manager Site Settings - patch by Jesse Rochman and Magpie fix for Japanese language by MEGU
