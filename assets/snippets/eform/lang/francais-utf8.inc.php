@@ -1,19 +1,25 @@
 <?php
 /**
-* snippets/eform/francais.inc.php
-* Fichier Langue en francais pour eForm
+* snippets/eform/francais-utf8.inc.php
+* French language file for eForm
+* local revision: $Id: french.inc.php,v 1.2 2006/11/22 14:47:54 odeland Exp $
 */
 
 
 $_lang["ef_thankyou_message"] = "<h3>Merci !</h3><p>Vos informations ont été correctement transmises.</p>";
 $_lang["ef_no_doc"] = "Document ou chunk introuvable pour le modèle n°=";
 //$_lang["ef_no_chunk"] = ""; //obsolète
-$_lang["ef_validation_message"] = "<strong>Des erreurs ont été detectées dans le formulaire :</strong><br />";
-$_lang["ef_required_message"] = " Les champs indispensables ci-dessous sont introuvables: {fields}<br />";
+//$_lang["ef_validation_message"] = "<strong>Des erreurs ont été detectées dans le formulaire :</strong><br />";
+$_lang["ef_validation_message"] = "<div class=\"errors\"><strong>Veuillez corriger les erreurs suivantes:</strong><br />[+ef_wrapper+]</div>"; //changed
+$_lang['ef_rule_passed'] = 'Succès de la règle [+rule+] (input="[+input+]").';
+$_lang['ef_rule_failed'] = '<span style="color:red;">Échec</span> de la règle [+rule+] (input="[+input+]")';
+$_lang["ef_required_message"] = " Les champs requis suivant sont introuvables: {fields}<br />";
+$_lang['ef_error_list_rule'] = 'Erreur de validation des champs! Règle #LIST déclarée mais aucune valeur de liste trouvée: ';
 $_lang["ef_invalid_number"] = " n'est pas un nombre valide";
 $_lang["ef_invalid_date"] = " n'est pas une date valide";
 $_lang["ef_invalid_email"] = " n'est pas une adresse mail valide";
 $_lang["ef_upload_exceeded"] = " a dépassé la limite de taille en upload.";
+$_lang["ef_upload_error"] = ": erreur du fichier transmis."; //NEW
 $_lang["ef_failed_default"] = "Valeur incorrecte";
 $_lang["ef_failed_vericode"] = "Code de vérification invalide.";
 $_lang["ef_failed_range"] = "La valeur n'est pas dans l'intervalle permis";
@@ -22,6 +28,7 @@ $_lang["ef_failed_eval"] = "Valeur non validée";
 $_lang["ef_failed_ereg"] = "Valeur non validée";
 $_lang["ef_failed_upload"] = "type de fichier incorrect.";
 $_lang["ef_error_validation_rule"] = "Règle de validation non reconnue";
+$_lang["ef_error_filter_rule"] = "Text filter not recognized";
 $_lang["ef_tamper_attempt"] = "tentative pour trafiquer le code du formulaire detectée!";
 $_lang["ef_error_formid"] = "identifiant ou nom du formulaire incorrect.";
 $_lang["ef_debug_info"] = "Information de déboggage: ";
