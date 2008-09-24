@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4142 - September 24, 2008)
+MODx 0.9.6.3 (rev 4145 - September 24, 2008)
 ====================================
+* [#MODX-168] Fix issue where phantom keywords metatag could be added to document due to haskeywords setting being out of sync
 * [FS#1078] Fix duplicate content processor for MySQL versions < 4.0.14
 * [#MODX-303] Update DocManager Japanese language file
 * [#MODX-158] Remove broken stylesheet references from DocManager module

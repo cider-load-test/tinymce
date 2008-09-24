@@ -624,8 +624,11 @@ class DocumentParser {
     function mergeDocumentMETATags($template) {
         if ($this->documentObject['haskeywords'] == 1) {
             // insert keywords
-            $keywords= implode(", ", $this->getKeywords());
-            $metas= "\t<meta name=\"keywords\" content=\"$keywords\" />\n";
+            $keywords = $this->getKeywords();
+            if (is_array($keywords) && count($keywords) > 0) {
+	            $keywords = implode(", ", $keywords);
+	            $metas= "\t<meta name=\"keywords\" content=\"$keywords\" />\n";
+            }
 
 	    // Don't process when cached
 	    $this->documentObject['haskeywords'] = '0';
