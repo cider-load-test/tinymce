@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4138 - September 24, 2008)
+MODx 0.9.6.3 (rev 4140 - September 24, 2008)
 ====================================
+* [#MODX-303] Update DocManager Japanese language file
 * [#MODX-158] Remove broken stylesheet references from DocManager module
 * [#MODX-244] Fix the display of user and web user photos in the manager
 * [#MODX-140] Make Security Notices and News items open in new tab/window
