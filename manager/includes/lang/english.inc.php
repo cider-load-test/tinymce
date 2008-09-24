@@ -178,6 +178,7 @@ $_lang["database_table_records"] = 'Records';
 $_lang["database_table_tablename"] = 'Table name';
 $_lang["database_table_totalsize"] = 'Total size';
 $_lang["database_table_totals"] = 'Totals:';
+$_lang['database_version'] = 'Database Version:';
 $_lang["date"] = 'Date';
 $_lang["datechanged"] = 'Date changed';
 $_lang["defaultcache_message"] = 'Select \'Yes\' to make all new documents cacheable by default.';
