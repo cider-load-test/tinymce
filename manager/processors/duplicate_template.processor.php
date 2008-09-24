@@ -11,20 +11,20 @@ $id=$_GET['id'];
 
 // duplicate template
 if (version_compare(mysql_get_server_info(),"4.0.14")>=0) {
-	$sql = "INSERT INTO $dbase.`".$table_prefix."site_templates` (templatename, description, content)
-			SELECT CONCAT('Duplicate of ',templatename) AS 'templatename', description, content
+	$sql = "INSERT INTO $dbase.`".$table_prefix."site_templates` (templatename, description, content, category)
+			SELECT CONCAT('Duplicate of ',templatename) AS 'templatename', description, content, category
 			FROM $dbase.`".$table_prefix."site_templates` WHERE id=$id;";
 	$rs = mysql_query($sql);
 }
 else {
-	$sql = "SELECT CONCAT('Duplicate of ',templatename) AS 'templatename', description, content
+	$sql = "SELECT CONCAT('Duplicate of ',templatename) AS 'templatename', description, content, category
 			FROM $dbase.`".$table_prefix."site_templates` WHERE id=$id;";
 	$rs = mysql_query($sql);
 	if($rs) {
 		$row = mysql_fetch_assoc($rs);
 		$sql = "INSERT INTO $dbase.`".$table_prefix."site_templates`
-				(templatename, description, content) VALUES
-				('".mysql_escape_string($row['templatename'])."', '".mysql_escape_string($row['description'])."','".mysql_escape_string($row['content'])."');";
+				(templatename, description, content, category) VALUES
+				('".mysql_escape_string($row['templatename'])."', '".mysql_escape_string($row['description'])."','".mysql_escape_string($row['content'])."', ".mysql_escape_string($row['category']).");";
 		$rs = mysql_query($sql);
 	}
 }
