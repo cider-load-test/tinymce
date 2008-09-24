@@ -2,8 +2,10 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4152 - September 24, 2008)
+MODx 0.9.6.3 (rev 4153 - September 24, 2008)
 ====================================
+* Switched double quotes to single quotes and added minor speed improvements to files.dynamic.php
+* [#MODX-209] File manager can now handle files with illegal url characters (added urlencode escaping).
 * [#MODX-219] Fix broken image paths
 * [#MODX-179] Duplicating resources now duplicates the category setting as well
 * [#MODX-290] Minimum PHP requirement updated in language files to 4.2.0
