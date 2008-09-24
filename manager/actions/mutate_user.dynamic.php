@@ -792,7 +792,7 @@ if (is_array($evtOut))
             <td colspan="2"><div class='split'></div></td>
           </tr>
           <tr>
-              <td colspan="2" align="center"><img name="iphoto" src="<?php echo $userdata['photo'] ? $userdata['photo']: "media/style/$manager_theme/images/_tx_.gif"; ?>" /></td>
+              <td colspan="2" align="center"><img name="iphoto" src="<?php echo !empty($userdata['photo']) ? MODX_SITE_URL.$userdata['photo'] : "media/style/$manager_theme/images/_tx_.gif"; ?>" /></td>
           </tr>
 		</table>
 	</div>

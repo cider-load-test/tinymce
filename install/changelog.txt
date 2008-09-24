@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4119 - September 20, 2008)
+MODx 0.9.6.3 (rev 4137 - September 24, 2008)
 ====================================
+* [#MODX-244] Fix the display of user and web user photos in the manager
 * [#MODX-140] Make Security Notices and News items open in new tab/window
 * [#MODX-341] Ensure duplicate aliases have the number suffix properly incremented
 * [FS#1065] Fix problem with losing selected metatags when editing documents
