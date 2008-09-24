@@ -105,7 +105,7 @@ if($limit<1) {
       <td><?php echo $logentry['id']; ?></td> 
 	  <td><?php echo strlen($logentry['pagetitle'])>20 ? substr($logentry['pagetitle'], 0, 20)."..." : $logentry['pagetitle'] ; ?></td> 
       <td><?php echo strlen($logentry['description'])>35 ? substr($logentry['description'], 0, 35)."..." : $logentry['description'] ;  ?></td>
-      <td align="center"><?php echo $logentry['deleted']==1 ? "<img align='absmiddle' src='media/images/tree/trash.gif' alt='".$_lang['search_item_deleted']."'>" : ""; ?></td>
+      <td align="center"><?php echo $logentry['deleted']==1 ? "<img align='absmiddle' src='media/style/".($manager_theme ? $manager_theme.'/' : '')."images/icons/trash_full.png' alt='".$_lang['search_item_deleted']."'>" : ""; ?></td>
       <td align="center"><img align='absmiddle' src='media/style/<?php echo $manager_theme ? "$manager_theme/":""; ?>images/tree/<?php echo $icon; ?>.gif'></td>	  
     </tr> 
     <?php

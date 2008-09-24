@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4148 - September 24, 2008)
+MODx 0.9.6.3 (rev 4152 - September 24, 2008)
 ====================================
+* [#MODX-219] Fix broken image paths
 * [#MODX-179] Duplicating resources now duplicates the category setting as well
 * [#MODX-290] Minimum PHP requirement updated in language files to 4.2.0
 * [#MODX-168] Fix issue where phantom keywords metatag could be added to document due to haskeywords setting being out of sync
