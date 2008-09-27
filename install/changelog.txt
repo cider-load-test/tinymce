@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3 (rev 4170 - September 26, 2008)
 ====================================
+* [FS#978] manage keywords length not limited to varchar(40) DB value
 * [CR-MODX-39] Button Back in Upgrade Existing Install goes to wrong screen.
 * [#MODX-188] Default installation language set to english, patch from CR-MODX-28.
 * [FS#907] Small fix to QuickEdit to correctly include JS/CSS files if friendly alias paths are being used and no <base> tag is specified in the template
@@ -35,7 +36,7 @@ MODx 0.9.6.3 (rev 4170 - September 26, 2008)
 * [FS#1079] Apply URL TV patch to Doc Manager module
 * [#MODX-218] Fix broken image paths in Newspublisher snippet
 * [#MODX-266] Stop .svn folder appearing on help screen if MODx install was checked out from SVN
-* [FS#1076] Fix calendar JS error occurring if calendar TV name contains an hyphen
+* [FS#1076] [FS#853] Fix calendar JS error occurring if calendar TV name contains an hyphen
 
 MODx 0.9.6.2 (rev 4076 - September 15, 2008)
 ====================================
