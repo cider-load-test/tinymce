@@ -48,7 +48,7 @@ unset($_SESSION['itemname']); // clear this, because it's only set for logging p
 <?php
 if(isset($_REQUEST['submitok'])) {
 	$searchid = $_REQUEST['searchid'];
-	$searchtitle = htmlentities($_POST['pagetitle'], ENT_QUOTES);
+	$searchtitle = htmlentities($_POST['pagetitle'], ENT_QUOTES, $modx_charset);
 	$searchcontent = addslashes($_REQUEST['content']);
 	$searchlongtitle = addslashes($_REQUEST['longtitle']);
 	
