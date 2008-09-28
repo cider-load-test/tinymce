@@ -5,7 +5,7 @@
  */
 
 	// Added by Raymond 20-Jan-2005
-	function getTVDisplayFormat($name,$value,$format,$paramstring="",$tvtype="",$docid="") {
+	function getTVDisplayFormat($name,$value,$format,$paramstring="",$tvtype="",$docid="", $sep='') {
 
 		global $modx;
 
@@ -329,8 +329,9 @@
 			default:
 				$value = parseInput($value);
 				if($tvtype=='checkbox'||$tvtype=='listbox-multiple') {
-					// remove delimiter from checkbox and listbox-multiple TVs
-					$value = str_replace('||','',$value);
+					// add separator
+					$value = explode('||',$value);
+					$value = implode($sep,$value);
 				}
 				$o = $value;
 				break;

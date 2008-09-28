@@ -1876,14 +1876,14 @@ class DocumentParser {
     }
 
     # returns an associative array containing TV rendered output values. $idnames - can be an id or name that belongs the template that the current document is using
-    function getTemplateVarOutput($idnames= array (), $docid= "", $published= 1) {
+    function getTemplateVarOutput($idnames= array (), $docid= "", $published= 1, $sep='') {
         if (count($idnames) == 0) {
             return false;
         } else {
             $output= array ();
             $vars= ($idnames == '*' || is_array($idnames)) ? $idnames : array ($idnames);
             $docid= intval($docid) ? intval($docid) : $this->documentIdentifier;
-            $result= $this->getTemplateVars($vars, "*", $docid, $published, "", ""); // remove sort for speed
+            $result= $this->getTemplateVars($vars, "*", $docid, $published, "", "", $sep); // remove sort for speed
             if ($result == false)
                 return false;
             else {
@@ -1894,7 +1894,7 @@ class DocumentParser {
 			$row= $result[$i];
 			if (!$row['id'])
 				$output[$row['name']]= $row['value'];
-			else	$output[$row['name']]= getTVDisplayFormat($row['name'], $row['value'], $row['display'], $row['display_params'], $row['type'], $docid);
+			else	$output[$row['name']]= getTVDisplayFormat($row['name'], $row['value'], $row['display'], $row['display_params'], $row['type'], $docid, $sep);
 		}
 		return $output;
             }
