@@ -62,5 +62,32 @@
         }        
         return true;
     }
+    
+    function preserveUrl($docid = '', $alias = '', $array_values = array(), $suffix = false) {
+		global $modx;
+		$array_get = $_GET;
+		$urlstring = array();
+	
+		unset($array_get["id"]);
+		unset($array_get["q"]);
+		unset($array_get["webloginmode"]);
+	
+		$array_url = array_merge($array_get, $array_values);
+		foreach ($array_url as $name => $value) {
+			if (!is_null($value)) {
+				$urlstring[] = $name . '=' . urlencode($value);
+			}
+		}
+	
+		$url = join('&',$urlstring);
+		if ($suffix) {
+			if (empty($url)) {
+				$url = "?";
+			} else {
+				$url .= "&";
+			}
+		}
+		return $modx->makeUrl($docid, $alias, $url);
+	}
 
 ?>
