@@ -278,7 +278,7 @@
 				if ($params['attrib']) $o.= $params['attrib']." ";
 				$o.= "scrolling='".($params['sbar']=='No' ? "no":($params['sbar']=='Yes' ? "yes":"auto"))."' ";
 				$o.= "src='".$value."' frameborder='".$params['borsize']."' ";
-				$o.= "onload=\"window.setTimeout('ResizeViewPort(\\\\'".$params['vpid']."\\\\',".$autoMode.")',100);\" width='".$w."' height='".$h."' ";
+                $o.= "onload=\"window.setTimeout('ResizeViewPort(\\'".$params['vpid']."\\',".$autoMode.")',100);\" width='".$w."' height='".$h."' "; 
 				$o.= ">";
 				$o.= $eTag;
 				break;
