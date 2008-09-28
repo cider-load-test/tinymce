@@ -1295,7 +1295,7 @@ class DocumentParser {
         }
         $sql= "INSERT INTO " . $this->getFullTableName("event_log") . " (eventid,type,createdon,source,description,user) " .
         "VALUES($evtid,$type," . time() . ",'$source','$msg','" . $this->getLoginUserID() . "')";
-        $ds= @mysql_query($sql);
+        $ds= @$this->db->query($sql);
         if (!$ds) {
             echo "Error while inserting event log into database.";
             exit();
