@@ -8,7 +8,7 @@ defined('IN_PARSER_MODE') or die();
 # load tpl
 if(is_numeric($tpl)) $tpl = ($doc=$modx->getDocuments($tpl)) ? $doc['content']:"Document '$tpl' not found.";
 else if($tpl) $tpl = ($chunk=$modx->getChunk($tpl)) ? $chunk:"Chunk '$tpl' not found.";
-if(!$tpl) $tpl = getWebSignuptpl();
+if(!$tpl) $tpl = getWebSignuptpl($useCaptcha);
 
 // extract declarations
 $declare = webLoginExtractDeclarations($tpl);
@@ -169,7 +169,7 @@ else if ($isPostBack){
 }
 
 // Returns Default WebChangePwd tpl
-function getWebSignuptpl(){
+function getWebSignuptpl($useCaptcha){
     ob_start();
     ?>
     <!-- #declare:separator <hr> --> 
