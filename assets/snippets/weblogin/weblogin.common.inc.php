@@ -42,7 +42,7 @@
 
     // Send new password to the user
     function webLoginSendNewPassword($email,$uid,$pwd,$ufn){
-        global $modx;
+        global $modx, $site_url;
         $mailto = $modx->config['mailto'];
         $websignupemail_message = $modx->config['websignupemail_message'];    
         $emailsubject = $modx->config['emailsubject'];
@@ -56,7 +56,7 @@
         $message = str_replace("[+ufn+]",$ufn,$message);
         $message = str_replace("[+sname+]",$site_name,$message);
         $message = str_replace("[+semail+]",$emailsender,$message);
-        $message = str_replace("[+surl+]",dirname(PHP_SELF),$message);
+        $message = str_replace("[+surl+]",$site_url,$message);
         if(!mail($email, $emailsubject, $message, "From: ".$emailsender."\r\n"."X-Mailer: Content Manager - PHP/".phpversion())) {
             return webLoginAlert("Error while sending mail to $mailto",1);
         }        
