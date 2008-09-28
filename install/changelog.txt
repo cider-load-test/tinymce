@@ -55,6 +55,7 @@ MODx 0.9.6.3 (rev 4188 - September 28, 2008)
 * Updated TinyMCE to version 3.2.0.1
 * [FS#1036] Moved Rewrite Browser Paths (strip_image_paths) in configuration so that it's editable even when Enable Resource Browser is set to 'no'.
 * [FS#665] Fixed ViewPort Javascript code errors (thanks to Antonio)
+* [FS#1027] Added 'Path to CSS file' to user configuration so that it can be overridden on a per user basis
 
 MODx 0.9.6.2 (rev 4076 - September 15, 2008)
 ====================================

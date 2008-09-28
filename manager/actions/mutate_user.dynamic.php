@@ -715,6 +715,18 @@ if (is_array($evtOut))
           <tr id='editorRow2' style="display: <?php echo $use_editor==1 ? $displayStyle : 'none' ; ?>">
             <td colspan="2"><div class='split'></div></td>
           </tr>
+          <tr id='editorRow14' class="row3" style="display: <?php echo $use_editor==1 ? $displayStyle : 'none' ; ?>">
+            <td nowrap class="warning"><b><?php echo $_lang["editor_css_path_title"]?></b></td>
+            <td><input onchange="documentDirty=true;" type='text' maxlength='255' style="width: 250px;" name="editor_css_path" value="<?php echo isset($usersettings["editor_css_path"]) ? $usersettings["editor_css_path"] : "" ; ?>" />
+			</td>
+          </tr>
+          <tr id='editorRow15' class='row3' style="display: <?php echo $use_editor==1 ? $displayStyle : 'none' ; ?>">
+            <td width="200">&nbsp;</td>
+            <td class='comment'><?php echo $_lang["editor_css_path_message"]?></td>
+          </tr>
+		  <tr id='editorRow16' class="row3" style="display: <?php echo $use_editor==1 ? $displayStyle : 'none' ; ?>">
+            <td colspan="2"><div class='split'></div></td>
+          </tr>
           <tr id='rbRow1' class='row3' style="display: <?php echo $use_browser==1 ? $displayStyle : 'none' ; ?>">
             <td nowrap class="warning"><b><?php echo $_lang["rb_base_dir_title"]?></b></td>
             <td><input onchange="documentDirty=true;" type='text' maxlength='255' style="width: 300px;" name="rb_base_dir" value="<?php echo isset($usersettings["rb_base_dir"]) ? $usersettings["rb_base_dir"]:""; ?>" />
