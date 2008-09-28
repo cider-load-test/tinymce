@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4178 - September 28, 2008)
+MODx 0.9.6.3 (rev 4179 - September 28, 2008)
 ===================================
+* [FS#1073] Duplicate TV associations when duplicating a template
 * [FS#283] Allow Weblogin to work with password-less registration forms by generating random password if no password POST value is passed
 * [FS#687] Fix the [+surl+] placeholder in the Weblogin snippet
 * [FS#999] Prevent log error when connecting to a second database

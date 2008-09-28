@@ -28,8 +28,17 @@ else {
 		$rs = mysql_query($sql);
 	}
 }
-if($rs) $newid = mysql_insert_id(); // get new id
-else {
+if($rs) {
+	$newid = mysql_insert_id(); // get new id
+	// duplicate TV values
+	$tvs = $modx->db->select('*', $modx->getFullTableName('site_tmplvar_templates'), 'templateid='.$id);
+	if ($modx->db->getRecordCount($tvs) > 0) {
+		while ($row = $modx->db->getRow($tvs)) {
+			$row['templateid'] = $newid;
+			$modx->db->insert($row, $modx->getFullTableName('site_tmplvar_templates'));
+		}
+	}
+} else {
 	echo "A database error occured while trying to duplicate variable: <br /><br />".mysql_error();
 	exit;
 }
