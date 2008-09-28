@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4183 - September 28, 2008)
+MODx 0.9.6.3 (rev 4184 - September 28, 2008)
 ===================================
+* Add default sort order for new template variables, prevents '$rs not set' error
 * [FS#900] Fix incorrect system setting for default template on install (without demo content)
 * [FS#392] Add optional separator parameter to $modx->getTemplateVarOutput() for checkbox/multiselect lists
 * [FS#895] Fix Captcha implementation in WebSignup snippet
