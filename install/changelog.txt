@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4197 - September 28, 2008)
+MODx 0.9.6.3 (rev 4199 - September 29, 2008)
 ===================================
+* [FS#806] Allow '.','-', and '_' in TV names - manually encode these as rawurlencode() doesn't convert them (related to [#MODX-154])
 * [FS#833] Fix inconsistent Stay buttons (use labels like on other pages)
 * [FS#1037] Prevent currently logged-in user password update logging out without displaying the new password 
 * [FS#944] Enable RTE for TVs when creating/editing a weblink

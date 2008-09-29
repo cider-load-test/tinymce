@@ -949,7 +949,8 @@ if (($content['richtext'] == 1 || $_REQUEST['a'] == 4) && $use_editor == 1) {
 		for ($i = 0; $i < $limit; $i++) {
 			// Go through and display all Template Variables
 			$row = mysql_fetch_assoc($rs);
-			$row['name'] = rawurlencode($row['name']);
+			$additionalEncodings = array('-' => '%2D', '.' => '%2E', '_' => '%5F');
+			$row['name'] = str_replace(array_keys($additionalEncodings), array_values($additionalEncodings), rawurlencode($row['name']));
 			if ($row['type'] == 'richtext' || $row['type'] == 'htmlarea') {
 				// Add richtext editor to the list
 				if (is_array($replace_richtexteditor)) {

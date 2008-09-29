@@ -157,7 +157,8 @@ $sql .= "LEFT JOIN $tbl_site_tmplvar_access tva ON tva.tmplvarid=tv.id  ";
 $sql .= "WHERE tvtpl.templateid = '" . $template . "' AND (1='" . $_SESSION['mgrRole'] . "' OR ISNULL(tva.documentgroup)" . ((!$docgrp) ? "" : " OR tva.documentgroup IN ($docgrp)") . ") ORDER BY tv.rank;";
 $rs = $modx->db->query($sql);
 while ($row = $modx->db->getRow($rs)) {
-	$row['name'] = rawurlencode($row['name']);
+	$additionalEncodings = array('-' => '%2D', '.' => '%2E', '_' => '%5F');
+	$row['name'] = str_replace(array_keys($additionalEncodings), array_values($additionalEncodings), rawurlencode($row['name']));
 	$tmplvar = '';
 	switch ($row['type']) {
 		case 'url':
