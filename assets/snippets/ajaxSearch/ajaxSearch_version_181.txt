@@ -1,0 +1,205 @@
+
+                           AjaxSearch - version 1.8.1
+                           
+                           Coroico - http://www.modx.wangba.fr
+                           
+                 
+Previous version : 1.8.0 delivered the 24th July 2008
+
+============================== NEW OPTIONS / CHANGES ==================================
+
+==== AjaxSearch MySQL Query completely re-designed
+
+     The SQL Query is now build to find in joined tables only the requested field
+     that match with the search terms.
+     
+     The list of id of concatened field is also available.
+     
+     For instance maxigallery provides the fields :
+     - gal_title, gal_descr, gal_filename but also gal_id where gal_id is the list
+     of the image id, listed in each gal_* fields.
+
+
+==== Extend the search to others parts of a document - ADDON-24
+
+    Until now AjaxSearch was limited to do the search into the content ("site_content" table)
+    and partially into TVs linked to the document ("tmplvar_contentvalues" table).
+    
+    With the 1.8.1 version you could now define where to do the search (in which parts)
+    For that a whereSearch parameter should be used:
+
+     &whereSearch : define in which parts (tables) & elements (fields) the search occurs
+     
+     by default = "content|tv" allow the search in all the fields of content and tv values.
+     
+     The first key word should be the main table and the following the joined tables.
+     
+     Others defined key-words for the search are : 
+     - jot : for a search in the jot comments ("jot_content" table)
+     - maxigallery : for the search in maxigallery ("maxigallery" table)
+     
+     e.g: &whereSearch=`content,tv,jot,maxigallery` allows the search in all these parts of a document.
+     
+     You could also add your own tables where to do a search by defining your own keys.
+     See demo on: http://www.modx.wangba.fr/index.php?id=180
+     
+     
+     with 1.8.1 You could specify finely in which elements (fiels) do the search, like this:
+     
+     &whereSearch=`content:pagetitle,introtext,content|tv:tv_value|maxigallery:gal_title`
+     
+     For "content", elements available for a search are: 
+      pagetitle, longtitle, description, alias, introtext, menutitle, content
+    
+     For "tv", elements available for a search are: 
+      tv_value which a concatenation of all the values of tvs
+      
+     For "jot", elements available for a search are: 
+      jot_content which is a concatenation of all the content comments
+      
+     For "maxigallery", elements available for a search are: 
+      gal_title, gal_descr, gal_filename
+      gal_filename is available for display
+
+
+     By default the search occurs in all elements of each part:
+     &whereSearch=`content,tv,jot,maxigallery` is equivalent to
+     &whereSearch=`content:pagetitle,longtitle,description,alias,introtext,menutitle,content|tv:tv_value|jot:jot_content|maxigallery:gal_title,gal_descr,gal_filename`
+    
+     But you could also avoid the search in a table by using the "null" metacharacter:
+     &whereSearch=`content:null|maxigallery:gal_title,gal_descr`    
+     Here "content" is specify as the main table, but no fields are used in the search (:null).
+     So all the documents are displayed. Search restriction occurs only in title and description of Maxigallery documents
+    
+
+
+==== withTvs : Select the Tvs where to search. ADDON-24
+
+      &withTvs = `comma separated list of tv names`
+      
+      e.g: &withTvs=`asTags1,asTags2` limit the search in tvs to "asTags1" and "asTags2"
+      
+      By default all the Tvs are used for the search
+      Inexisting TVs are filtered and not taken into account
+
+
+    
+==== &filter : to exclude unwanted documents of the search
+    
+    &filter runs as the &filter Ditto 2.1 parameter. 
+    (see http://ditto.modxcms.com/tutorials/basic_filtering.html)
+    
+    
+    Added: ADDON-16: SearchString metacharacter available with &filter parameter
+    
+    e.g: &filter='tv_content,#,7' with search terms equal "word"
+    is equivalent to &filter='tv_content,word,7'
+    
+    Limitation: the case of several words as search terms is not still managed
+    neither the use of the advSearch.
+    
+    So with &filter='tv_content,#,7' and search terms equal "word1 word2"
+    whatever the advSearch parameter is equivalent to &filter='tv_content,word1 word2,7'
+
+
+
+====  Choose your search term from a predefined search word list
+
+Now you could define a list of predefined search terms by using:
+
+&searchWordList=`functionName,arg1,arg2,...` 
+
+where myWordList is the name of a user function 
+and arg1, arg2 , ... are new optional parameters of the function.
+This parameters could be used to select depending the context, the right word list
+
+e.g: &searchWordList=`myWordList,francais-utf8,[*id*]`
+
+with the definition of the function functionName :
+
+// searchWordList user function
+// Uncomment and complete the core function and choose your own function name
+// string functionName()
+// functionName : name of searchWordList function passed as &searchWordList parameter
+// params : array of parameters
+// return a comma separated list of words
+
+function myWordList($params){ 
+
+  $language = $params[0];
+  $docid = $params[1];
+  
+  switch($language) {
+
+    case 'english-utf8':    
+    switch($docid){
+
+      case 61:
+      $list = "primary,school,children,africa,education,teacher";
+      break;
+      
+      case 62:
+      $list = "parents,education,asia";
+      break;
+    }
+    break;
+    
+    case 'francais-utf8':
+    switch($docid){
+
+      case 61:
+      $list = "primaire,école,enfants,afrique,éducation,professeur";
+      break;
+      
+      case 62:
+      $list = "parents,éducation,asie";
+      break;
+    }
+    break;
+  }
+  return $list;
+}
+
+
+====  Mootools or Jquery js library  - ADDON-19  >>>>>>>>>>>> FOR FUTURE USAGE
+
+    &jscript ['jquery'|'mootools']
+    Set this to jquery if you would like to include the jquery librairy
+    Default: mootools
+    
+    e.g: &jscript=`jquery`
+
+    
+
+================================ ISSUES CORRECTED ==============================
+
+ADDON-8 : Call to undefined function mb_strlen()
+http://svn.modxcms.com/jira/browse/ADDON-8
+
+ADDON-9 : $this->setDatabaseCharset(); - Missing parenthesis
+http://svn.modxcms.com/jira/browse/ADDON-9
+
+ADDON-10 : order and ranking don't work together
+http://svn.modxcms.com/jira/browse/ADDON-10
+
+ADDON-11 : Error if is present a blank in the beginning of search text
+http://svn.modxcms.com/jira/browse/ADDON-11
+
+ADDON-12 : A call to the mb_strrpos php function with an empty text
+http://svn.modxcms.com/jira/browse/ADDON-12
+
+ADDON-14 : "ajaxSearch" used as title in the snippet's heading
+http://svn.modxcms.com/jira/browse/ADDON-14
+
+ADDON-18 : this code (filter:alpha (opacity=0);-moz-opacity:0.) is not valid CSS.
+http://svn.modxcms.com/jira/browse/ADDON-18
+
+ADDON-20 : TV placeholders not working with non-ajax searches
+http://svn.modxcms.com/jira/browse/ADDON-20
+
+ADDON-21 : W3C XHTML Strict Validation - layout.tpl.html
+http://svn.modxcms.com/jira/browse/ADDON-21
+
+ADDON-22 : Fix for Japanese language
+http://svn.modxcms.com/jira/browse/ADDON-22
+
