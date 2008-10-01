@@ -133,28 +133,28 @@
 
 			case "ticker":
 				$modx->regClientStartupScript("manager/media/script/mootools/mootools.js");
-				$modx->regClientStartupScript("manager/media/script/mootools/moodx.js");
+				$modx->regClientStartupScript("manager/media/script/mootools/moostick.js?init=false");
 				$class = (!empty($params['class']) ? " class=\"".$params['class']."\"" : "");
 				$style = (!empty($params['style']) ? " style=\"".$params['style']."\"" : "");
 				$o .= "\n<div id=\"".$id."\"".$class.$style.">\n";
 				if(!empty($value)){
 					$delim = ($params['delim'])? $params['delim']:"||";
 					if ($delim=="\\n") $delim = "\n";
-					$value = parseInput($value,$delim,"array");
-					if(count($value)>0){
-						for($i=0;$i<count($value);$i++){
-							$o.= "    <div class=\"mooticker\">".$value[$i]."</div>\n";
+					$val = parseInput($value,$delim,"array",false);
+					if(count($val)>0){
+						$o.= "    <ul id=\"".$id."Ticker\">\n";
+						for($i=0;$i<count($val);$i++){
+							$o.= "        <li id=\"tickerItem{$i}\">".$val[$i]."</li>\n";
 						}
+						$o.= "    </ul>\n";
 					}
 				}
 				$o .= "</div>\n";
 				$o .= "<script type=\"text/javascript\">\n";
 				$o .= "	window.addEvent('domready', function(){\n";
-				$o .= "		var modxTicker = new MooTicker(\$(\"".$id."\"),{\n";
-				$o .= "			width: '".$params['width']."',\n";
-				$o .= "			height: '".$params['height']."',\n";
-				$o .= "			interval: ".$params['delay']."\n";
-				$o .= "		});\n";
+				$o .= "		var modxTicker = new Moostick(\$(\"".$id."Ticker\"), true, ".(!empty($params['delay'])?$params['delay']:"true").")\n";
+				$o .= "		$(\"".$id."Ticker\").setStyle('width','".$params['width']."');\n";
+				$o .= "		$(\"".$id."Ticker\").setStyle('height','".$params['height']."');\n";
 				$o .= "	});\n";
 				$o .= "</script>\n";
 				break;
@@ -346,12 +346,12 @@
 	}
 
 	// returns an array if a delimiter is present. returns array is a recordset is present
-	function parseInput($src, $delim="||", $type="string") { // type can be: string, array
+	function parseInput($src, $delim="||", $type="string", $columns=true) { // type can be: string, array
 		if (is_resource($src)) {
 			// must be a recordset
 			$rows = array();
 			$nc = mysql_num_fields($src);
-			while ($cols = mysql_fetch_row($src)) $rows[] = ($type=="array")? $cols : implode(" ",$cols);
+			while ($cols = mysql_fetch_row($src)) $rows[] = ($columns)? $cols : implode(" ",$cols);
 			return ($type=="array")? $rows : implode($delim,$rows);
 		}
 		else {
