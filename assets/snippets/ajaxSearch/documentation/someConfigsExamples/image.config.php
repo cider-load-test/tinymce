@@ -2,6 +2,8 @@
 // For a global parameter initialisation use the following syntax $__param = 'value';
 // To overwrite parameter snippet call use $param = 'value';
 
+$__stripOutput = 'saveImage';
+
 // StripInput user function. 
 // Uncomment and complete the core function and choose your own function name
 // string functionName(string searchstring)
@@ -21,28 +23,29 @@ function myStripInput($searchString, &$advSearch){
 // functionName : name of stripOutput function passed as &stripOutput parameter
 // results : string php variable name as results
 // return the filtered results
-/*
-function myStripOutput($results){ 
 
+function saveImage($results){ 
+
+  // replace line Breaking by space
+  $results = stripLineBreaking($results);
+  // strip other html tags
+  $results = stripHtmlExceptImage($results);
+  // strip javascript tags
+  $results = stripJscripts($results);
+  
   return $results;
 }
-*/
+
 // searchWordList user function
 // Uncomment and complete the core function and choose your own function name
 // string functionName()
 // functionName : name of searchWordList function passed as &searchWordList parameter
 // return a comma separated list of words
-/*function searchWordList($params){ 
 
-  switch($params[0]){ 
-    case '61':
-      $list = "primary,school,education,children,teacher,africa,litteracy,bicycle";
-      break;         
-    case '62':
-      $list = "primaire,école,éducation,enfants,professeur,afrique,littérature,bicyclette";
-      break; 
-  }
+function enSearchWordList(){ 
+
+  $list = "guatemala,samassekou,equateur,cromer,zatreanu,burnett";
   return $list;
 }
-*/
+
 ?>
