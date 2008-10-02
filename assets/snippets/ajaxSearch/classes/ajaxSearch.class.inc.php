@@ -11,7 +11,7 @@
  *    Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
  *    Ryan Thrash (rthrash - ryan@vertexworks.com) 
  *
- * Updated: 02/10/2008 - whereSearch, withTvs, new sql query 
+ * Updated: 02/10/2008 - whereSearch, withTvs, new sql query, debug 
  * Updated: 24/07/2008 - Added rank, order & filter, breadcrumbs, tvPhx, cleardefault parameters    
  * Updated: O2/07/2008 - New extract algorithm, search in tv, jot and maxygallery
  * Updated: O2/07/2008 - Added Phx templating & chunk parameters
@@ -102,6 +102,12 @@ class AjaxSearch extends Search{
     global $modx;
 
     $this->setDebug();    // set debug levels
+    
+    if ($this->dbg) {
+      $this->asDebug->dbgLog($this->cfg,"AjaxSearch - User configuration - Before parameter checking");   // user parameters
+      $this->asDebug->dbgLog($this->readConfigFile(),"AjaxSearch - Configuration file");                  // configuration file
+    }
+    
     $this->loadLang();    // load language labels
     
     if (!$this->checkDatabaseCharset($msg)) return $msg;  // Check database charset
@@ -129,6 +135,8 @@ class AjaxSearch extends Search{
         // get the IDs
         $this->getListIDs();
 
+        if ($this->dbg) $this->asDebug->dbgLog($this->cfg,"AjaxSearchPopup - User configuration - Before doSearch");   // user parameters
+
         // Do the search and get the results
         $rs = $this->doSearch();
 
@@ -144,7 +152,9 @@ class AjaxSearch extends Search{
           for ($y = $this->offset; ($y < $useLimit) && ($y < $nbrs); $y++) {
             $moveToRow = mysql_data_seek($rs,$y);
             $row = $modx->db->getRow($rs);
-            $this->searchResults[] = $this->addExtractToRow($row); 
+            $result = $this->addExtractToRow($row);
+            $this->searchResults[] = $result; 
+            if (($this->dbg)%2 == 0) $this->asDebug->dbgLog($result,"AjaxSearchPopup - Output result before ranking");   // search results
           }
           
           // sort search results by rank if needed
@@ -152,7 +162,6 @@ class AjaxSearch extends Search{
 
           $nbResults = count($this->searchResults);
           for($i=0;$i<$nbResults;$i++){
-
             $this->chkResult = new asChunkie($this->tplRes);
             $this->varResult = array();
           

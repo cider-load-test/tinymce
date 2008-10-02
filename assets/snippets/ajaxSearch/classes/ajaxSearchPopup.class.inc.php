@@ -11,7 +11,7 @@
  *    Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
  *    Ryan Thrash (rthrash - ryan@vertexworks.com) 
  *
- * Updated: 02/10/2008 - whereSearch, withTvs, new sql query 
+ * Updated: 02/10/2008 - whereSearch, withTvs, new sql query, debug
  * Updated: 24/07/2008 - Added rank, order & filter, breadcrumbs, tvPhx parameters 
  * Updated: O2/07/2008 - New extract algorithm, search in tv, jot and maxygallery
  * Updated: O2/07/2008 - Added Phx templating & chunk parameters
@@ -103,6 +103,12 @@ class AjaxSearchPopup extends Search{
 
     if (!$this->loadConfig($msg)) return $msg;  // load configuration file for user functions
     $this->setDebug();    // set debug levels
+    
+    if ($this->dbg) {
+      $this->asDebug->dbgLog($this->cfg,"AjaxSearchPopup - User configuration - Before parameter checking");   // user parameters
+      $this->asDebug->dbgLog($this->readConfigFile(),"AjaxSearchPopup - Configuration file");                  // configuration file
+    }
+        
     $this->loadLang();    // load language labels
 
     // set page and database charset
@@ -121,6 +127,8 @@ class AjaxSearchPopup extends Search{
       // get the Ids
       $this->getListIDs();
 
+      if ($this->dbg) $this->asDebug->dbgLog($this->cfg,"AjaxSearchPopup - User configuration - Before doSearch");   // user parameters
+
       // Do the search and get the results
       $rs = $this->doSearch();
 
@@ -131,7 +139,9 @@ class AjaxSearchPopup extends Search{
 
         // output results in searchResults array
         while ($row = mysql_fetch_assoc($rs)) {
-          $this->searchResults[] = $this->addExtractToRow($row);
+          $result = $this->addExtractToRow($row);
+          $this->searchResults[] = $result;
+          if (($this->dbg)%2 == 0) $this->asDebug->dbgLog($result,"AjaxSearchPopup - Output result before ranking");   // search results
         }
 
         // sort search results by rank if needed

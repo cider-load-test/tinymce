@@ -13,13 +13,11 @@
  *    Ryan Thrash (rthrash - ryan@vertexworks.com) 
 */
 
-define('AS_DBGFILE', dirname(__FILE__) . '/../ajaxSearch_log.txt');   // Name of debug file
-
 class Search {
 
   // debug
-  var $dbg;     // debug flag
-  var $dbgFd;   // debug file descriptor
+  var $dbg;       // debug flag
+  var $asDebug;   // debug instance
 
 /**
  * Load the configuration file 
@@ -147,7 +145,8 @@ class Search {
       $select = 'SELECT ' . $fields . ' FROM ' . $from . ' WHERE ' . $where;
       $select .= ' GROUP BY ' . $groupBy . ' HAVING ' . $having . ' ORDER BY ' . $orderBy;      
       
-      if ($this->dbg) $this->dbgLog('select= ',$select);
+      if ($this->dbg) $this->asDebug->dbgLog($this->printSelect($select),"Select");
+      
       $records = $modx->db->query($select);
     }
     return $records;
@@ -513,16 +512,11 @@ class Search {
       $ptable = $p_array[0];
       $pfields = $p_array[1];
       
-      if ($this->dbg) {
-        $this->dbgLog('initSearchContext ptable= ',$ptable);      
-        $this->dbgLog('initSearchContext pfields= ',$pfields);
-      }
-      
       switch ($ptable){      
         case 'content':
           // Content ========================================= search in content
           $this->main = array(
-              'tb_name' => $modx->getFullTableName('site_content'),
+              'tb_name' => $this->getShortTableName('site_content'),
               'tb_alias' => 'sc',
               'id' => 'id',
               'searchable' => array('pagetitle','longtitle','description','alias','introtext','menutitle','content'),
@@ -578,7 +572,7 @@ class Search {
           // document group allowed regarding user authentification
           if ($this->validListIDs($this->cfg['docgrp'])) {
             $this->main['jfilters'][] = array(
-              'tb_name' => $modx->getFullTableName('document_groups'),
+              'tb_name' => $this->getShortTableName('document_groups'),
               'tb_alias' => 'dg',
               'main' => 'id',
               'join' => 'document',
@@ -601,7 +595,7 @@ class Search {
         // keep care of tb_alias change. The tb_alias of joined tables is also used by tvPhx parameter
         case 'tv':
           $this->joined[] = array(
-              'tb_name' => $modx->getFullTableName('site_tmplvar_contentvalues'),
+              'tb_name' => $this->getShortTableName('site_tmplvar_contentvalues'),
               'tb_alias' => 'tv',
               'id' => 'id',
               'main' => 'id',                     // main table field used for join
@@ -623,7 +617,7 @@ class Search {
           if ($this->cfg['withTvs']) {
             $wtv = $this->getListTvs($this->cfg['withTvs']);
             $this->joined[$j]['jfilters'][] = array(
-              'tb_name' => $modx->getFullTableName('site_tmplvars'),            
+              'tb_name' => $this->getShortTableName('site_tmplvars'),            
               'tb_alias' => 'tmpl',
               'main' => 'tmplvarid',
               'join' => 'id',
@@ -637,7 +631,7 @@ class Search {
         // Jot =========================================== search in jot content
         case 'jot':
           $this->joined[] = array(
-              'tb_name' => $modx->getFullTableName('jot_content'),
+              'tb_name' => $this->getShortTableName('jot_content'),
               'tb_alias' => 'jot',
               'id' => 'id',
               'main' => 'id',
@@ -666,7 +660,7 @@ class Search {
         // Maxigallery ================================= search in image gallery
         case 'maxigallery':
           $this->joined[] = array(
-              'tb_name' => $modx->getFullTableName('maxigallery'),
+              'tb_name' => $this->getShortTableName('maxigallery'),
               'tb_alias' => 'gal',
               'id' => 'id',
               'main' => 'id',
@@ -708,6 +702,13 @@ class Search {
           break;
       }
     }
+    
+    if ($this->dbg) { // debug of search context
+      $this->asDebug->dbgLog($this->main,"Search context main ".$this->main['tb_name']);
+      if (isset($this->joined)) 
+        foreach($this->joined as $joined) $this->asDebug->dbgLog($joined,"Search context joined ".$joined['tb_name']);
+    }
+    
     return $mainDefined;
   }
 
@@ -728,7 +729,7 @@ class Search {
 
     $tvs = explode(',',$listTvs);
     //-- get tmplvar id to check if the TV exists
-    $tplName = $modx->getFullTableName('site_tmplvars');
+    $tplName = $this->getShortTableName('site_tmplvars');
     foreach($tvs as $tv){
       $tplRS = $modx->db->select('id', $tplName, 'name="' . $tv . '"');
       if (!$modx->db->getRecordCount($tplRS)) {
@@ -1441,11 +1442,12 @@ class Search {
   function setResultSearchable($row){
 
     // set Phx for the "id" of the main table
-    $id = $this->main['id'];    
+    $id = $this->main['id']; 
     $this->varResult[$id] = $row[$id];
 
     // set Phx for date fields of the main table
-    if (isset($this->main['date'])) foreach($this->main['date'] as $field) $this->setPhxField($field,$row,'date');
+    if (isset($this->main['date'])) 
+      foreach($this->main['date'] as $field) $this->setPhxField($field,$row,'date');
 
     // set Phx for displayed fields of the main table
     foreach($this->main['displayed'] as $field) $this->setPhxField($field,$row,'string');
@@ -1488,36 +1490,54 @@ class Search {
         $this->varResult[$showField] = 0;
     }
   }
-  
+
+/**
+ *  returns a short table name based on db settings
+ */
+    function getShortTableName($tbl) {
+      global $modx;
+      return "`" . $modx->db->config['table_prefix'] . $tbl . "`";
+    }
+
 /**
  *  setDebug level
  */
   function setDebug(){
-     
     $dbg = (int) $this->cfg['debug'];
-    if ($dgb == 2 || $dbg == 1) $this->dbg = $dbg;
+    if ($dbg > 0 && $dbg < 5) {
+      if (!class_exists('AjaxSearchDebug')) include_once AS_PATH . "classes/ajaxSearchDebug.class.inc.php";
+      $this->dbg = $dbg;
+      $this->asDebug = new AjaxSearchDebug($this->cfg['version'],$dbg);
+    }
     else $this->dbg = 0; 
-    if ($this->dbg) $this->dbgFd = fopen(AS_DBGFILE,'a+');
+    
     return;
   }
   
 /**
- *  set Debug log record
+ *  print Select
  */
-  function dbgLog($lab,$val){
+    function printSelect($query) {
+      // rought SQL beautyfuller
+      $searched = array(" SELECT", " GROUP_CONCAT"," LEFT JOIN"," SELECT"," FROM"," WHERE"," GROUP BY"," HAVING"," ORDER BY");
+      $replace = array(" \r\nSELECT"," \r\nGROUP_CONCAT"," \r\nLEFT JOIN"," \r\nSELECT"," \r\nFROM"," \r\nWHERE"," \r\nGROUP BY"," \r\nHAVING"," \r\nORDER BY");
+      $query = str_replace($searched,$replace," ".$query);
+      return $query;
+    }
 
-    $when = date('[j-M-y h:i:s]  ');  
-    if (is_array($val)) {
-      foreach($val as $key => $value) fwrite($this->dbgFd,$when.$key." = ".$value."\n\n");
-    }
-    else {
-      fwrite($this->dbgFd,$when.$lab.$val."\n\n");
-    }
-    return;
+/**
+ *  Read config file
+ */
+  function readConfigFile(){
+     
+    $config = $this->cfg['config'];
+    $configFile = (substr($config, 0, 5) != "@FILE") ? AS_PATH."configs/$config.config.php" : $modx->config['base_path'].trim(substr($config, 5));
+    $fh = fopen($configFile, 'r');
+    $output = fread($fh, filesize($configFile));
+    fclose($fh);
+    return $output;
   }
-
 }
-  
 //
 // =============================================================================
 //
@@ -1534,8 +1554,8 @@ class Search {
     include_once $basepath . "/tmplvars.format.inc.php";
     include_once $basepath . "/tmplvars.commands.inc.php";
 
-    $tb1 = $modx->getFullTableName("site_tmplvar_contentvalues");
-    $tb2 = $modx->getFullTableName("site_tmplvars");
+    $tb1 = $this->getShortTableName("site_tmplvar_contentvalues");
+    $tb2 = $this->getShortTableName("site_tmplvars");
     $select = "SELECT stv.name,stc.tmplvarid,stc.contentid,stv.type,stv.display,stv.display_params,stc.value";
     $select .= " FROM ".$tb1." stc LEFT JOIN ".$tb2." stv ON stv.id=stc.tmplvarid ";
     $select .= " WHERE stc.id='".$id."' AND stc.contentid='".$docid."' ";
