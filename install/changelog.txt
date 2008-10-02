@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4212 - October 1, 2008)
+MODx 0.9.6.3 (rev 4223 - October 2, 2008)
 ===================================
+* [#MODX-352] Update Jot to version 1.1.4
 * [#MODX-304] Update Japanese language file for Quickedit
 * [FS#1052] Fix CC bug in PHPMailer class
 * [FS#806] Allow '.','-', and '_' in TV names - manually encode these as rawurlencode() doesn't convert them (related to [#MODX-154])
