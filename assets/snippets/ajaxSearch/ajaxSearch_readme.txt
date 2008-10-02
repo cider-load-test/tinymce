@@ -140,8 +140,28 @@ This is done automatically with the addJscript parameter unless you set it to 0.
         config_name - Other config installed in the configs folder or in any folder within the MODx base path via @FILE
         Configuration files are named in the form: <config_name>.config.php
     
-    &debug [1 | 0 ] (optional) - Output debugging information
-    
+    &debug [1 | 2 | 3 | 4 | 0 ] (optional) - Output debugging information
+
+        0 : debug not activated (Default)
+        
+        1 and 2: File mode - Output logged into a file named ajaxSearch_log.txt in the 
+        ajaxSearch folder.
+        
+        1 : Parameters, search context and sql query logged. Records found are not logged
+        2 : Parameters, search context, sql query AND Records found are logged
+
+        3 and 4: FireBug mode. The trace is logged into the Firebug console of Mozilla.
+      
+        3 : Parameters, search context and sql query logged. Records found are not logged
+        4 : Parameters, search context, sql query AND Records found are logged
+
+        with the mode 3 and 4 you need to install:
+        the Firebug plugin under Firefox : https://addons.mozilla.org/en-US/firefox/addon/1843
+        and the FirePhp plugin (version 0.2.b.1 or upper) : http://www.firephp.org/
+        
+        For the mode 3 and 4, Php5 is mandatory. 
+        These 2 modes are switched to 1 and 2 if you use Php4.
+         
     &language [ language_name | manager_language ] (optional)
         with manager_language = $modx->config['manager_language'] by default 
 

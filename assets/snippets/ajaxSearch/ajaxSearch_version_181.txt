@@ -10,7 +10,7 @@ Previous version : 1.8.0 delivered the 24th July 2008
 
 ==== AjaxSearch MySQL Query completely re-designed
 
-     The SQL Query is now build to find in joined tables only the requested field
+     The SQL Query is now build to find in joined tables only the requested fields
      that match with the search terms.
      
      The list of id of concatened field is also available.
@@ -64,12 +64,14 @@ Previous version : 1.8.0 delivered the 24th July 2008
 
      By default the search occurs in all elements of each part:
      &whereSearch=`content,tv,jot,maxigallery` is equivalent to
-     &whereSearch=`content:pagetitle,longtitle,description,alias,introtext,menutitle,content|tv:tv_value|jot:jot_content|maxigallery:gal_title,gal_descr,gal_filename`
+     &whereSearch=`content:pagetitle,longtitle,description,alias,introtext,menutitle,
+             content|tv:tv_value|jot:jot_content|maxigallery:gal_title,gal_descr,gal_filename`
     
      But you could also avoid the search in a table by using the "null" metacharacter:
      &whereSearch=`content:null|maxigallery:gal_title,gal_descr`    
      Here "content" is specify as the main table, but no fields are used in the search (:null).
-     So all the documents are displayed. Search restriction occurs only in title and description of Maxigallery documents
+     So all the documents are displayed. Search restriction occurs only in title and 
+     description of Maxigallery documents
     
 
 
@@ -159,6 +161,43 @@ function myWordList($params){
   }
   return $list;
 }
+
+
+==== debug : log some informations for debugging (or understanding of your results)
+
+      &debug = [ 0 | 1 | 2 | 3 | 4 ]
+      
+      0 : the debug mode is not activated (Default)
+      
+      1 and 2: File mode )
+      debug activated. Trace is by default logged into a file named ajaxSearch_log.txt
+      in the ajaxSearch folder.
+      
+        1 : Parameters, search context and sql query logged. Records found are not logged
+        2 : Parameters, search context, sql query AND Records found are logged
+      
+      To avoid an increasing of the file, only one transaction is logged. Overwritted 
+      by the log of the following one.
+      
+      3 and 4: FireBug mode
+      debug activated. The trace is logged into the firebug console of Mozilla.
+      
+        3 : Parameters, search context and sql query logged. Records found are not logged
+        4 : Parameters, search context, sql query AND Records found are logged
+        
+        with the mode 3 and 4 you need to install:
+        the Firebug plugin under Firefox : https://addons.mozilla.org/en-US/firefox/addon/1843
+        and the FirePhp plugin (version 0.2.b.1 or upper) : http://www.firephp.org/
+        
+      For the mode 3 and 4, Php5 is mandatory. These 2 modes are switched to 1 and 2
+      if you use Php4.
+      
+      For security reasons, the full name of tables (with database name) have 
+      been replaced by short names (prefix + table name)
+      
+      The output produce the SELECT statement and you could use it directly by 
+      copy & paste in PhpMyAdmin to retrieve your results and undertsand it.
+    
 
 
 ====  Mootools or Jquery js library  - ADDON-19  >>>>>>>>>>>> FOR FUTURE USAGE
