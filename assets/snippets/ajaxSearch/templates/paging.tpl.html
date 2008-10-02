@@ -1,0 +1,12 @@
+[+as.tpl:is=`paging`:then=`
+  <span class="ajaxSearch_paging">
+    [+as.pagingText+]
+    [+as.pagingLinks+]
+  </span>
+`+]
+[+as.tpl:is=`pagingLinks`:then=`
+  <a href="[+as.pagingLink+]">[+as.pagingText+]</a>[+as.pagingSeperator+]
+`+]
+[+as.tpl:is=`pagingLinksCurrent`:then=`
+  [+as.pagingText+][+as.pagingSeperator+]
+`+]
