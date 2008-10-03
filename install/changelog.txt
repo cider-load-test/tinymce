@@ -2,8 +2,9 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4237 - October 3, 2008)
+MODx 0.9.6.3 (rev 4238 - October 3, 2008)
 ===================================
+* [#MODX-365] Fix some hardcoded language strings in the Access Permissions pages
 * [#MODX-389] Convert TV Input Options field to be a textarea
 * [#MODX-394] Updating incorrect language string in installer
 * Updated AjaxSearch to version 1.8.1
