@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3 (rev 4225 - October 2, 2008)
 ===================================
+* [#MODX-394] Updating incorrect language string in installer
 * Updated AjaxSearch to version 1.8.1
 * Fix to user permissions class (thanks Dimmy!)
 * [#MODX-351] Update eForm to version 1.4.4.5
