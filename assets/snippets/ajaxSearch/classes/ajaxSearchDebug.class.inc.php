@@ -17,43 +17,37 @@ define('AS_DBGFIREPHP', dirname(__FILE__) . '/FirePHPCore/FirePHP.class.php');  
 class AjaxSearchDebug{
 
   var $typeDbg;    // 1: file  2: fireBug console
-  
+
   var $asFirePhp;  // firePhp instance
   var $asDbgFd;    // file descriptor
 
-  function AjaxSearchDebug($version,$type) {
+  function AjaxSearchDebug($version,$level) {
   
-    if (!(version_compare(phpversion(), "5.0.0", ">=")) && (($type == 3 || $type=4))) $type--; 
-    $this->typeDbg = $type;
+    if (!(version_compare(phpversion(), "5.0.0", ">=")) && ($level < 0 )) $level = abs($level);
+    $this->dbg = $level;
     $header = "AjaxSearch ".$version." - Php".phpversion()." - MySql ".mysql_get_server_info();
 
-    switch($type){
-      // debug trace in a file
-      case 1:
-      case 2:
+    if ($level > 0 && $level < 4) {  // debug trace in a file    
         $this->asDbgFd = fopen(AS_DBGFILE,'w+');
         $this->dbgLog($header);
         fclose($this->asDbgFd);
         $this->asDbgFd = fopen(AS_DBGFILE,'a+');
-        break;
-      // debug trace in the firebug console
-      case 3:
-      case 4:
+    }
+    else if ($level > -4 && $level < 0) {  // debug trace in the firebug console
         include_once(AS_DBGFIREPHP);
         ob_start();
         $this->dbgLog($header);
-      break;
     }
   }
-  
+
 /**
  *  set Debug log record
  */
   function dbgLog(){
 
     $args = func_get_args();
-    
-    if ($this->typeDbg == 1 || $this->typeDbg == 2) {
+
+    if ($this->dbg > 0) {
       // write trace in a file 
       $when = date('[j-M-y h:i:s]  ');
       $nba = count($args);
@@ -69,13 +63,14 @@ class AjaxSearchDebug{
       return true;
     }
     else {
+      // write in Firebug console
       $args[] = 'INFO';
       //$instance = FirePHP::getInstance(true);
       require_once(AS_DBGFIREPHP);
       $instance = FirePHP::getInstance(true);
       return call_user_func_array(array($instance,'fb'),$args);
     }
-    return true;
+    return;
   }
 }
 ?>

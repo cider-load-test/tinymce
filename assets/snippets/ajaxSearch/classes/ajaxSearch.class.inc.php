@@ -11,7 +11,7 @@
  *    Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
  *    Ryan Thrash (rthrash - ryan@vertexworks.com) 
  *
- * Updated: 02/10/2008 - whereSearch, withTvs, new sql query, debug 
+ * Updated: 02/10/2008 - whereSearch, withTvs, new sql query, debug, subSearch
  * Updated: 24/07/2008 - Added rank, order & filter, breadcrumbs, tvPhx, cleardefault parameters    
  * Updated: O2/07/2008 - New extract algorithm, search in tv, jot and maxygallery
  * Updated: O2/07/2008 - Added Phx templating & chunk parameters
@@ -25,10 +25,6 @@
  * Updated: 09/18/06 - Added user permissions to searching
  * Updated: 03/20/06 - All variables are set in the main snippet & snippet call   
 */
-
-define('MIN_CHARS',3);     // minimum number of characters admitted in case of a wrong &minChars parameter
-define('EXTRACT_MIN',50);  // minimum length of extract
-define('EXTRACT_MAX',800); // maximum length of extract
 
 define('FORM_ID','id="ajaxSearch_form" ');    // ajaxSearch form id
 define('OUTPUT_ID','<div id="ajaxSearch_output"></div>'); // output id
@@ -53,15 +49,21 @@ class AjaxSearch extends Search{
   
   var $searchString;    // term searched
   var $advSearch;       // advanced search option
+
+  var $subSearch;       // search in a subdomain
+  var $subSearchName;   // sub search function name
+  var $subSearchSel;    // choice selected
+  var $subSearchNb;     // max number of choices
+
   var $dbCharset;       // database charset
   var $pcreModifier;    // PCRE modifier
   var $isPhp5;          // Php version >= 5.0.0
- 
+
   var $searchFormId;    // ajaxSearch form id
   var $offset;          // paging offset
   var $withContent;     // content as main table
   var $listIDs;         // list of Id allowed
-    
+
   var $breadcrumbs = array();     // breadcrumbs infos
   var $tvphx = array();           // tvPhx infos
 
@@ -104,23 +106,22 @@ class AjaxSearch extends Search{
     $this->setDebug();    // set debug levels
     
     if ($this->dbg) {
+      $this->asDebug->dbgLog($this->readConfigFile(),"AjaxSearch - Configuration file " . $this->cfg['config']);   // configuration file
       $this->asDebug->dbgLog($this->cfg,"AjaxSearch - User configuration - Before parameter checking");   // user parameters
-      $this->asDebug->dbgLog($this->readConfigFile(),"AjaxSearch - Configuration file");                  // configuration file
     }
     
     $this->loadLang();    // load language labels
-    
+
     if (!$this->checkDatabaseCharset($msg)) return $msg;  // Check database charset
 
-    $this->checkParams();   // check parameters and init some variables
+    if (!$this->checkAjaxSearchParams($msg)) return $msg;  // Check user parameters
 
+    $this->initVariables(); // initialize some variables and functions
+    
     $validSearch = $this->validSearchString($msg);  // Initialize search string & advanced search mode
 
     $searchAction = $this->setResultsPage();    // set searchAction
-    $this->setClearDefault();                   // set clear Default js function
     $this->setAjaxSearchHeader();               // set header
-
-    $this->initChkVariables(); // initialize chunkie variables
 
     // set input form if needed
     $this->setInputForm($validSearch,$searchAction);
@@ -154,17 +155,18 @@ class AjaxSearch extends Search{
             $row = $modx->db->getRow($rs);
             $result = $this->addExtractToRow($row);
             $this->searchResults[] = $result; 
-            if (($this->dbg)%2 == 0) $this->asDebug->dbgLog($result,"AjaxSearchPopup - Output result before ranking");   // search results
+            if ($this->dbgRes) $this->asDebug->dbgLog($result,"AjaxSearchPopup - Output results before ranking");
           }
-          
+
           // sort search results by rank if needed
           $this->sortResultsByRank($this->searchString,$this->advSearch); 
 
           $nbResults = count($this->searchResults);
           for($i=0;$i<$nbResults;$i++){
+
             $this->chkResult = new asChunkie($this->tplRes);
             $this->varResult = array();
-          
+
             // set result link as PHx
             $this->setResultLink($this->searchResults[$i]);
 
@@ -257,58 +259,77 @@ class AjaxSearch extends Search{
   }
 
 /**
- * Check user params 
+ * Check AjaxSearch user params 
+ *
+ * @param string $msgErr error message
+ * @return validity (true/false)    
  */
-  function checkParams(){
+  function checkAjaxSearchParams(& $msgErr){
 
-    global $modx;
+    $msgErr = '';
+    
+    if (isset($_POST['subSearch']) || isset($_GET['subSearch'])) {
+      // catch the new parameters from config file and overwrite pre-existing parameters
+      if (isset($_POST['subSearch'])) $this->subSearch = $_POST['subSearch']; 
+      else $this->subSearch = urldecode($_GET['subSearch']);
+      // subsearch function name and radio button index
+      $sbsch_array = explode(',',$this->subSearch);
+      $this->subSearchName = $sbsch_array[0];
+      if (isset($sbsch_array[1])) $this->subSearchSel = $sbsch_array[1];
+      else $this->subSearchSel = 1;
+      // existing function ?
+      if (!function_exists($this->subSearchName)) {
+          $msgErr = "<br /><h3>Error: search function $this->subSearchName not defined in the configuration file: ".$this->cfg['config']." !</h3><br />";
+          return false;
+      }
+      else {
+        $subSearchName = $this->subSearchName;
+        $newcfg = $subSearchName();    // call to the subSearch function to set up new parameters
+        $this->updateConfig($newcfg);
+      }
+    }
+    else $this->subSearch = '';
 
-    // Check some input parameters and initialize some others
-    if ($this->cfg['minChars'] < MIN_CHARS) $this->cfg['minChars'] = MIN_CHARS;
-
-    if ($this->cfg['extractLength'] < EXTRACT_MIN) $this->cfg['extractLength'] = EXTRACT_MIN;
-    if ($this->cfg['extractLength'] > EXTRACT_MAX) $this->cfg['extractLength'] = EXTRACT_MAX;
-
-    if (($this->cfg['hideMenu'] != 0) && ($this->cfg['hideMenu'] != 1) && ($this->cfg['hideMenu'] != 2)) $this->cfg['hideMenu'] = 2;
-
-    // check the number of extract and the fields to use with
-    $extr = explode(':',$this->cfg['extract']);
-    if (($extr[0] == '') || (!is_numeric($extr[0]))) $extr[0] = 0;
-    if (($extr[1] == '') || (is_numeric($extr[1]))) $extr[1] = 'content';
-    $this->extractNb = $extr[0];
-    $this->extractFields = explode(',',$extr[1]);
-    $this->cfg['extract'] = $extr[0] . ":" . $extr[1];
-
+    //check subSearch definition parameter (from snippet call)
+    if (isset($this->cfg['subSearch'])){
+      $sbsch_array = explode(',',$this->cfg['subSearch']);
+      $sbschNb = (int) $sbsch_array[0];
+      if (isset($sbsch_array[1])) $sbschSel = (int) $sbsch_array[1];
+      else $sbschSel = 1;
+      if ($sbschSel > $sbschNb) $sbschSel = $sbschNb;
+      if ($sbschSel < 1) $sbschSel = 1;
+      $this->cfg['subSearch'] = $sbschNb . ',' . $sbschSel;
+    }
     //check for paging offset
     $this->offset = (isset($_GET['AS_offset'])) ? $_GET['AS_offset'] : 0;
 
-    if ($this->cfg['ajaxSearch']) {
-      // check opacity parameter
-      if ($this->cfg['opacity'] < 0.) $this->cfg['opacity'] = 0.;
-      if ($this->cfg['opacity'] > 1.) $this->cfg['opacity'] = 1.;
+    if (!$this->checkParams($this->cfg,$msgErr)) return false;  // Check other user parameters
 
-      $this->searchFormId = FORM_ID;
-    }
-    else {
-      $this->searchFormId = '';    
-    }
+    return true;
+  }
 
-    // Initialize ID group where to look for
-    $listIDs = ($this->cfg['idType'] == "parents") ? $this->cfg['parents'] : $this->cfg['documents'];
-    $this->cfg['listIDs'] = $this->cleanIDs($listIDs);
+/**
+ * initVariables : Initialize some variables used
+ */
+  function initVariables(){
+  
+    global $modx;
 
-    // Initialize document group
-    $this->cfg['docgrp'] = '';
-    if ($docgrp = $modx->getUserDocGroups()) {
-      $this->cfg['docgrp'] = implode(",", $docgrp);
-    }
+    $this->initIdGroup();         // Initialize Id groups
+      
+    $this->initDocGroup();        // Initialize Documents group
 
-    // Initialize tvPhx
-    $this->initTvPhx();
+    $this->initTvPhx();           // Initialize tvPhx
 
-    // Initialize breadcrumbs
-    $this->initBreadcrumbs();
-    
+    $this->initBreadcrumbs();     // Initialize breadcrumbs
+
+    $this->initChkVariables();    // Initialize chunkie variables
+
+    $this->initClearDefault();    // Initialize the clear default function
+
+    $this->initSubSearchVariables(); // Initialize the subSearch variables
+
+    $this->initFormId();          // Initialize Form Id
   }
 
 /**
@@ -349,24 +370,13 @@ class AjaxSearch extends Search{
   }
 
 /**
- * setClearDefault : set the clear default js function
- */
-  function setClearDefault(){
-    global $modx;
-    if ($this->cfg['clearDefault']) {
-      //Adding the clearDefault javascript library
-      $modx->regClientStartupScript($this->cfg['jsClearDefault']);
-    }
-  }
-
-/**
  * setAjaxSearchHeader : set the ajax header with the appropriate variables
  */
   function setAjaxSearchHeader(){
 
     global $modx;
 
-    if ($this->cfg['ajaxSearch']) {
+    if ($this->cfg['clearDefault'] || $this->cfg['ajaxSearch']) {
       //Adding the javascript libraries & variables to the header
       if ($this->cfg['jScript'] == 'jquery') {
         if ($this->cfg['addJscript']) $modx->regClientStartupScript($this->cfg['jsJquery']);
@@ -389,6 +399,7 @@ as_language = '{$this->cfg['language']}';
 opacity = {$this->cfg['opacity']};
 advSearch = '{$this->advSearch}';
 whereSearch = '{$this->cfg['whereSearch']}';
+subSearch = '{$this->subSearchNb}';
 withTvs = '{$this->cfg['withTvs']}';
 order = '{$this->cfg['order']}';
 rank = '{$this->cfg['rank']}';
@@ -426,6 +437,25 @@ EOD;
   }
 
 /**
+ * initIdGroup : Initialize ID group where to look for
+ */
+  function initIdGroup(){ 
+    $listIDs = ($this->cfg['idType'] == "parents") ? $this->cfg['parents'] : $this->cfg['documents'];
+    $this->cfg['listIDs'] = $this->cleanIDs($listIDs);
+  }
+
+/**
+ * initDocGroup : Initialize document group
+ */
+  function initDocGroup(){
+    global $modx;
+    $this->cfg['docgrp'] = '';
+    if ($docgrp = $modx->getUserDocGroups()) {
+      $this->cfg['docgrp'] = implode(",", $docgrp);
+    }
+  }
+
+/**
  * initChkVariables : Initialize the chunkie variables used
  */
   function initChkVariables(){
@@ -442,8 +472,47 @@ EOD;
     $this->tplRes = "@CODE:" . $this->chkResult->template;
 
     $this->chkLayout = new asChunkie($this->cfg['tplLayout']);   // layout
+    
+    if ($this->dbgTpl) {
+      $this->asDebug->dbgLog($this->chkResults->getTemplate($tplResult),"AjaxSearch - tplResult template " . $tplResult);
+      $this->asDebug->dbgLog($this->chkResult->getTemplate($tplResults),"AjaxSearch - tplResults template" . $tplResults);
+      $this->asDebug->dbgLog($this->chkLayout->getTemplate($this->cfg['tplLayout']),"AjaxSearch - tplResult template" . $this->cfg['tplLayout']);
+    }
+  }
+  
+/**
+ * initClearDefault : initialize the clear default js function
+ */
+  function initClearDefault(){
+    global $modx;
+    if ($this->cfg['clearDefault']) {
+      //Adding the clearDefault javascript library
+      $modx->regClientStartupScript($this->cfg['jsClearDefault']);
+    }
   }
 
+/**
+ * initFormId : initialize the Form Id
+ */
+  function initFormId(){
+    if (isset($this->cfg['ajaxSearch'])) $this->searchFormId = FORM_ID;
+    else $this->searchFormId = '';    
+  }
+
+/**
+ * initSubSearchVariables : Initialize the subSearch variables from definition
+ */
+  function initSubSearchVariables(){
+
+    $sbsch_array = explode(',',$this->cfg['subSearch']);
+    $this->subSearchNb = $sbsch_array[0];
+    if (!isset($this->subSearchSel)){ // init choice selection if not already done
+      if (isset($sbsch_array[1])) $this->subSearchSel = $sbsch_array[1];
+      else $this->subSearchSel = 1;    
+    }
+    return;
+  }
+  
 /**
  * setResultsPagination : Set the pagination of results
  */
@@ -455,6 +524,8 @@ EOD;
     if ($grabMax > 0){
 
       $chkPaging = new asChunkie($this->cfg['tplPaging']);   // paging
+      if ($this->dbgTpl) $this->asDebug->dbgLog($chkPaging->getTemplate($this->cfg['tplPaging']),"AjaxSearch - tplResult template " . $this->cfg['tplPaging']);
+
       $tplPgg = "@CODE:" . $chkPaging->template;
       unset($chkPaging);
 
@@ -471,6 +542,7 @@ EOD;
         } else {
           $varLink['tpl'] = 'pagingLinks';
           $varLink['pagingLink'] = $modx->makeUrl($modx->documentIdentifier,'','AS_offset='.$nrp.'&AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch));
+
         }
         $varLink['pagingSeparator'] = ($nrp + $grabMax < $nbrs) ? $pageLinkSeparator : '' ;          
         $varLink['pagingText'] = $resultPageLinkNumber;
@@ -574,6 +646,11 @@ EOD;
       $this->varLayout['nowordsText'] = $this->_lang['nowords'];  
       $this->varLayout['nowordsChecked'] = ($this->advSearch == 'nowords' ? 'checked ="checked"' : '');
 
+      // subSearch 
+      for ($i=1;$i<$this->subSearchNb+1;$i++) {
+        $iChecked = "subSearch{$i}Checked";
+        $this->varLayout[$iChecked] = ($this->subSearchSel == $i ? 'checked ="checked"' : '');
+      }
     } else {
       $this->varLayout['showForm'] = '0';
     }

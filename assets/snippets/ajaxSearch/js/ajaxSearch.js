@@ -151,6 +151,14 @@ function doSearch() {
   if (r = $('radio_nowords')) {
     if (r.checked == true) advSearch = r.value;
   }
+  
+  // update the subSearch value from radio button if they exists
+  sbsname = '';
+  for (var i = 1; i < subSearch+1; i++) {
+    if (sbs = $('subSearch'+i)) {
+      if (sbs.checked == true) sbsname = sbs.value;
+    }
+  }
 
   // Setup the parameters and make the ajax call to the popup window
   var pars = Object.toQueryString({
@@ -161,6 +169,7 @@ function doSearch() {
     debug: debug,
     ajaxMax: ajaxMax,
     advSearch: encodeURI(advSearch),
+    subSearch: encodeURI(sbsname),
     whereSearch: encodeURI(whereSearch),
     withTvs: withTvs,
     order: order,

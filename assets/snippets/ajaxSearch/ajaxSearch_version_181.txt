@@ -19,7 +19,9 @@ Previous version : 1.8.0 delivered the 24th July 2008
      - gal_title, gal_descr, gal_filename but also gal_id where gal_id is the list
      of the image id, listed in each gal_* fields.
 
-
+    Refer to "behind the scene : sql" for explanations about the query is built
+    
+    
 ==== Extend the search to others parts of a document - ADDON-24
 
     Until now AjaxSearch was limited to do the search into the content ("site_content" table)
@@ -75,7 +77,7 @@ Previous version : 1.8.0 delivered the 24th July 2008
     
 
 
-==== withTvs : Select the Tvs where to search. ADDON-24
+==== &withTvs : Select the Tvs where to search. ADDON-24
 
       &withTvs = `comma separated list of tv names`
       
@@ -85,6 +87,73 @@ Previous version : 1.8.0 delivered the 24th July 2008
       Inexisting TVs are filtered and not taken into account
 
 
+==== &subSearch : use radio buttons to restrict where the search applies. ADDON-23
+    
+    To add radio-buttons for search in sub-domains add in your tplLayout template :
+
+    <ul id="ajaxSearch_subSearch">
+  		<li><input type="radio" id="subSearch1" name="subSearch" value="token1,1" [+as.subSearch1Checked+] /><label for="subSearch1">Label1</label></li>
+  		<li><input type="radio" id="subSearch2" name="subSearch" value="token2,2" [+as.subSearch2Checked+] /><label for="subSearch2">Label2</label></li>
+  		<li><input type="radio" id="subSearch3" name="subSearch" value="token3,3" [+as.subSearch3Checked+] /><label for="subSearch3">Label3</label></li>
+  		...
+  		<li><input type="radio" id="subSearchN" name="subSearch" value="tokenN,N" [+as.subSearchNChecked+] /><label for="subSearchN">LabelN</label></li>
+ 		</ul>
+
+    Where token1, token2, token3 ... tokenN are your own token linked to your sub-domains.
+    And Label1, label2, label3, .... , labelN the labels linked to these sub-domains
+    
+    subSearch1, ... subSearchN and subSearch1Checked, ..., subSearchNChecked are reserved word. Don't change it.
+    
+
+    And define token1, token2, ... tokenN as Php functions in your config file. 
+    Each function define should return an array with the parameters specific to the sub-domain.
+    
+    
+    e.g: 
+    
+    <ul id="ajaxSearch_subSearch">
+  		<li><input type="radio" id="subSearch1" name="subSearch" value="travel,1" [+as.subSearch1Checked+] /><label for="subSearch1">Travel pictures gallery</label></li>
+  		<li><input type="radio" id="subSearch2" name="subSearch" value="unesco,2" [+as.subSearch2Checked+] /><label for="subSearch2">The Unesco courrier</label></li>
+ 		</ul>
+
+    with configuration file : 
+    
+    <?php
+    function travel(){
+    
+      $config = array();
+      
+      // travel search definition
+      
+      $config['documents'] = '104';  
+      $config['whereSearch'] = 'content:alias|jot|maxigallery';
+      $config['extract'] = '0';
+      $config['breadcrumbs'] = 'Breadcrumbs,showHomeCrumb:0,showCrumbsAtHome:1';
+          
+      return $config;
+    }
+
+    function unesco(){
+    
+      $config = array();
+      
+      // unesco search definition
+      
+      $config['parents'] = '61';
+      $config['whereSearch'] = 'content:pagetitle,content|tv';
+      $config['withTvs'] = '+:asTag1';
+      $config['breadcrumbs'] = 'Breadcrumbs,showHomeCrumb:0,showCrumbsAtHome:1';
+    
+      return $config;
+    }
+    ?>
+
+    You could initialize the number of choices and the default selected radio-button.
+    by &subSearch=`nb_choice, default_selected`
+    
+    by default &subSearch=`5,1`. So if you have more than 5 possible choices you
+    need to change it.
+    
     
 ==== &filter : to exclude unwanted documents of the search
     
@@ -165,39 +234,40 @@ function myWordList($params){
 
 ==== debug : log some informations for debugging (or understanding of your results)
 
-      &debug = [ 0 | 1 | 2 | 3 | 4 ]
+      &debug = [ 0 | 1 | 2 | 3 | -1 | -2 | -3 ]
       
       0 : the debug mode is not activated (Default)
       
-      1 and 2: File mode )
+      1, 2, 3 : File mode
       debug activated. Trace is by default logged into a file named ajaxSearch_log.txt
       in the ajaxSearch folder.
       
-        1 : Parameters, search context and sql query logged. Records found are not logged
-        2 : Parameters, search context, sql query AND Records found are logged
+        1 : Parameters, search context and sql query logged.
+        2 : Parameters, search context, sql query AND templates logged
+        3 : Parameters, search context, sql query, templates AND Results logged
       
       To avoid an increasing of the file, only one transaction is logged. Overwritted 
       by the log of the following one.
       
-      3 and 4: FireBug mode
+      -1, -2, -3 : FireBug mode
       debug activated. The trace is logged into the firebug console of Mozilla.
       
-        3 : Parameters, search context and sql query logged. Records found are not logged
-        4 : Parameters, search context, sql query AND Records found are logged
+        -1 : Parameters, search context and sql query logged.
+        -2 : Parameters, search context, sql query AND templates logged
+        -3 : Parameters, search context, sql query, templates AND Results logged    
         
-        with the mode 3 and 4 you need to install:
+        with the FireBug mode you need to install:
         the Firebug plugin under Firefox : https://addons.mozilla.org/en-US/firefox/addon/1843
         and the FirePhp plugin (version 0.2.b.1 or upper) : http://www.firephp.org/
         
-      For the mode 3 and 4, Php5 is mandatory. These 2 modes are switched to 1 and 2
-      if you use Php4.
+      For the FireBug mode, Php5 is mandatory. These level -1,-2,-3 are switched 
+      respectively to 1,2,3 if your server runs whith Php4.
       
       For security reasons, the full name of tables (with database name) have 
       been replaced by short names (prefix + table name)
       
       The output produce the SELECT statement and you could use it directly by 
       copy & paste in PhpMyAdmin to retrieve your results and undertsand it.
-    
 
 
 ====  Mootools or Jquery js library  - ADDON-19  >>>>>>>>>>>> FOR FUTURE USAGE
@@ -208,6 +278,13 @@ function myWordList($params){
     
     e.g: &jscript=`jquery`
 
+
+==== Internal description of tables improved
+
+    For a search in your own table, you should first describe them.
+    The version 1.8.1 comes with some changes regarding the description of the main 
+    and joined tables. 
+    Refer to the AjaxSearch demo site for new tutorials or how-to documents.
     
 
 ================================ ISSUES CORRECTED ==============================

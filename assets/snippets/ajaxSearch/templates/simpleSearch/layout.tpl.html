@@ -1,10 +1,10 @@
 [+as.showForm:is=`1`:then=`
 <form [+as.formId+] action="[+as.formAction+]" method="post">
     <fieldset>
+		<input type="hidden" name="advSearch" value="[+as.advSearch+]" />
     <label for="ajaxSearch_input">
       <input id="ajaxSearch_input" class="cleardefault" type="text" name="search" value="[+as.inputValue+]"[+as.inputOptions+] />
     </label>
-		<input type="hidden" name="advSearch" value="[+as.advSearch+]" />
     <label for="ajaxSearch_submit">
       <input id="ajaxSearch_submit" type="submit" name="sub" value="[+as.submitText+]" />
     </label>

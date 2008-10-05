@@ -140,27 +140,40 @@ This is done automatically with the addJscript parameter unless you set it to 0.
         config_name - Other config installed in the configs folder or in any folder within the MODx base path via @FILE
         Configuration files are named in the form: <config_name>.config.php
     
-    &debug [1 | 2 | 3 | 4 | 0 ] (optional) - Output debugging information
+    &debug = [ 0 | 1 | 2 | 3 | -1 | -2 | -3 ] (optional) - Output debugging information
 
-        0 : debug not activated (Default)
+      0 : debug not activated (Default)
         
-        1 and 2: File mode - Output logged into a file named ajaxSearch_log.txt in the 
-        ajaxSearch folder.
-        
-        1 : Parameters, search context and sql query logged. Records found are not logged
-        2 : Parameters, search context, sql query AND Records found are logged
-
-        3 and 4: FireBug mode. The trace is logged into the Firebug console of Mozilla.
+      1, 2, 3 : File mode
+      debug activated. Trace is by default logged into a file named ajaxSearch_log.txt
+      in the ajaxSearch folder.
       
-        3 : Parameters, search context and sql query logged. Records found are not logged
-        4 : Parameters, search context, sql query AND Records found are logged
-
-        with the mode 3 and 4 you need to install:
+        1 : Parameters, search context and sql query logged.
+        2 : Parameters, search context, sql query AND templates logged
+        3 : Parameters, search context, sql query, templates AND Results logged
+      
+      To avoid an increasing of the file, only one transaction is logged. Overwritted 
+      by the log of the following one.
+      
+      -1, -2, -3 : FireBug mode
+      debug activated. The trace is logged into the firebug console of Mozilla.
+      
+        -1 : Parameters, search context and sql query logged.
+        -2 : Parameters, search context, sql query AND templates logged
+        -3 : Parameters, search context, sql query, templates AND Results logged    
+        
+        with the FireBug mode you need to install:
         the Firebug plugin under Firefox : https://addons.mozilla.org/en-US/firefox/addon/1843
         and the FirePhp plugin (version 0.2.b.1 or upper) : http://www.firephp.org/
         
-        For the mode 3 and 4, Php5 is mandatory. 
-        These 2 modes are switched to 1 and 2 if you use Php4.
+      For the FireBug mode, Php5 is mandatory. These level -1,-2,-3 are switched 
+      respectively to 1,2,3 if your server runs whith Php4.
+      
+      For security reasons, the full name of tables (with database name) have 
+      been replaced by short names (prefix + table name only)
+      
+      The output produce the SELECT statement and you could use it directly by 
+      copy & paste in PhpMyAdmin to retrieve your results and undertsand it.
          
     &language [ language_name | manager_language ] (optional)
         with manager_language = $modx->config['manager_language'] by default 
@@ -283,7 +296,7 @@ This is done automatically with the addJscript parameter unless you set it to 0.
         The function name could be followed by some parameter initialization
         e.g: &breadcrumbs=`Breadcrumbs,showHomeCrumb:0,showCrumbsAtHome:1`
 
-    tvPhx
+    &tvPhx
         Set placeHolders for TV (template variables)
         0 : disallow the feature (default)
         'tv:displayTV' : set up a placeholder named [+as.tvName.+] for each TV (named tvName) linked to the documents found

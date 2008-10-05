@@ -8,7 +8,7 @@ Created on: 01/03/2007
 
 Description: This code is called from the ajax request. It returns the search results.
 
-Updated: 02/10/2008 - whereSearch, withTvs, new sql query
+Updated: 02/10/2008 - whereSearch, withTvs, new sql query, subSearch
 Updated: 18/07/2008 - Added whereSearch, rank, order & filter parameters
 Updated: 02/07/2008 - Added Phx templating & chunk parameters
 Updated: 06/03/2008 - Added Hidden from menu and advanced search
@@ -36,7 +36,7 @@ if ($_POST['search']) {
   else {
     // include the ajaxSearchPopup class
     include_once AS_PATH."classes/ajaxSearchPopup.class.inc.php";
-    
+
     // Setup the MODx API
     define('MODX_API_MODE', true);
     // initiate a new document parser
@@ -54,6 +54,7 @@ if ($_POST['search']) {
       'language' => basename($_POST['as_language']),
       'ajaxSearch' => 1,
       'advSearch' => $_POST['advSearch'],
+      'subSearch' => $_POST['subSearch'],
       'whereSearch' => urldecode($_POST['whereSearch']),
       'withTvs' => $_POST['withTvs'],
       'order' => $_POST['order'],

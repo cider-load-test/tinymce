@@ -11,7 +11,7 @@
  *    Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
  *    Ryan Thrash (rthrash - ryan@vertexworks.com) 
  *
- * Updated: 02/10/2008 - whereSearch, withTvs, new sql query, debug
+ * Updated: 02/10/2008 - whereSearch, withTvs, new sql query, debug, subSearch
  * Updated: 24/07/2008 - Added rank, order & filter, breadcrumbs, tvPhx parameters 
  * Updated: O2/07/2008 - New extract algorithm, search in tv, jot and maxygallery
  * Updated: O2/07/2008 - Added Phx templating & chunk parameters
@@ -54,7 +54,10 @@ class AjaxSearchPopup extends Search{
 
   var $searchString;    // term searched
   var $advSearch;       // advanced search option
-  
+
+  var $subSearch;       // search in a subdomain
+  var $subSearchName;   // sub search function name
+
   var $pgCharset;       // page charset
   var $dbCharset;       // database charset
   var $needsConvert;    // charset conversion boolean
@@ -105,8 +108,8 @@ class AjaxSearchPopup extends Search{
     $this->setDebug();    // set debug levels
     
     if ($this->dbg) {
-      $this->asDebug->dbgLog($this->cfg,"AjaxSearchPopup - User configuration - Before parameter checking");   // user parameters
-      $this->asDebug->dbgLog($this->readConfigFile(),"AjaxSearchPopup - Configuration file");                  // configuration file
+      $this->asDebug->dbgLog($this->readConfigFile(),"AjaxSearch - Configuration file " . $this->cfg['config']);   // configuration file
+      $this->asDebug->dbgLog($this->cfg,"AjaxSearch - User configuration - Before parameter checking");   // user parameters
     }
         
     $this->loadLang();    // load language labels
@@ -114,12 +117,10 @@ class AjaxSearchPopup extends Search{
     // set page and database charset
     if (!$this->setCharset($msg)) return $msg;
 
-    $this->initChkVariables();   // initialize chunkie variables
-      
-    $this->initBreadcrumbs();    // Initialize breadcrumbs
+    if (!$this->checkAjaxSearchParams($msg)) return $msg;  // Check user parameters
     
-    $this->initTvPhx();          // Initialize tvPhx
-
+    $this->initVariables(); // initialize some variables and functions
+    
     if ($this->validSearchString($msg)) {
 
       $this->initClassVariables(); // initialize class variables
@@ -141,7 +142,7 @@ class AjaxSearchPopup extends Search{
         while ($row = mysql_fetch_assoc($rs)) {
           $result = $this->addExtractToRow($row);
           $this->searchResults[] = $result;
-          if (($this->dbg)%2 == 0) $this->asDebug->dbgLog($result,"AjaxSearchPopup - Output result before ranking");   // search results
+          if ($this->dbgRes) $this->asDebug->dbgLog($result,"AjaxSearchPopup - Output result before ranking");   // search results
         }
 
         // sort search results by rank if needed
@@ -203,7 +204,7 @@ class AjaxSearchPopup extends Search{
 
     // UTF-8 conversion is required if mysql character set is different of 'utf8'
     if ($this->needsConvert) $results = mb_convert_encoding($results,"UTF-8",$this->pgCharset);
-    
+
     return $results;
   }
 
@@ -240,13 +241,56 @@ class AjaxSearchPopup extends Search{
   }
 
 /**
+ * Check AjaxSearch user params 
+ *
+ * @param string $msgErr error message
+ * @return validity (true/false)    
+ */
+  function checkAjaxSearchParams(& $msgErr){
+
+    $msgErr = '';
+
+    // load some new parameters from configration file if needed
+    if ($this->cfg['subSearch'] != ''){
+      $sbsch_array = explode(',',$this->cfg['subSearch']);
+      $this->subSearchName = $sbsch_array[0];
+      $this->subSearchSel = $sbsch_array[1];
+      if (!function_exists($this->subSearchName)) {
+        $msgErr = "<br /><h3>Error: search function $this->subSearchName not defined in the configuration file: $this->config !</h3><br />";
+        return false;
+      }
+      else {
+        $subSearchName = $this->subSearchName;
+        $newcfg = $subSearchName();    // call to the subSearch function to set up new parameters
+        $this->updateConfig($newcfg);
+      }
+    }
+
+    if (!$this->checkParams($this->cfg,$msgErr)) return false;  // Check other user parameters
+    
+    return true;
+  }
+
+/**
+ * initVariables : Initialize some variables used
+ */
+  function initVariables(){
+
+    $this->initChkVariables();   // Initialize chunkie variables
+
+    $this->initBreadcrumbs();    // Initialize breadcrumbs
+
+    $this->initTvPhx();          // Initialize tvPhx
+  }
+
+/**
  * validSearchString : Validation of input search term
  */
   function validSearchString(& $msgErr){
 
     $valid = false;
     $msgErr = '';
-    
+
     $this->advSearch = $this->cfg['advSearch']; // initialize advanced search option
 
     // Initialize search string
@@ -288,6 +332,11 @@ class AjaxSearchPopup extends Search{
     if ($tplResult == '') $tplResult = "@FILE:" . AS_SPATH . 'templates/ajaxResult.tpl.html';         
     $this->chkResult = new asChunkie($tplResult);     // result
     $this->tplRes = "@CODE:" . $this->chkResult->template;
+
+    if ($this->dbgTpl) {
+      $this->asDebug->dbgLog($this->chkResults->getTemplate($tplResult),"AjaxSearch - tplResult template " . $tplResult);
+      $this->asDebug->dbgLog($this->chkResult->getTemplate($tplResults),"AjaxSearch - tplResults template" . $tplResults);
+    }
   }
 
 /**
@@ -298,7 +347,10 @@ class AjaxSearchPopup extends Search{
     if ($this->cfg['showMoreResults']) {
       $this->varResults['moreResults'] = 1;
       $this->varResults['moreClass'] = 'AS_ajax_more';
-      $this->varResults['moreLink'] = 'index.php?id='.$this->cfg['moreResultsPage'].'&amp;AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch);
+      if ($this->cfg['subSearch'] != '')
+        $this->varResults['moreLink'] = 'index.php?id='.$this->cfg['moreResultsPage'].'&amp;AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch).'&amp;subSearch='.urlencode($this->cfg['subSearch']);
+      else 
+        $this->varResults['moreLink'] = 'index.php?id='.$this->cfg['moreResultsPage'].'&amp;AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch);
       $this->varResults['moreTitle'] = $this->_lang['as_moreResultsTitle'];
       $this->varResults['moreText'] = $this->_lang['as_moreResultsText'];     
     }

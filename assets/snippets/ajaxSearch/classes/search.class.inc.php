@@ -13,10 +13,16 @@
  *    Ryan Thrash (rthrash - ryan@vertexworks.com) 
 */
 
+define('MIN_CHARS',3);     // minimum number of characters admitted in case of a wrong &minChars parameter
+define('EXTRACT_MIN',50);  // minimum length of extract
+define('EXTRACT_MAX',800); // maximum length of extract
+
 class Search {
 
   // debug
   var $dbg;       // debug flag
+  var $dbgTpl;    // log templates
+  var $dbgRes;    // log data results
   var $asDebug;   // debug instance
 
 /**
@@ -192,7 +198,7 @@ class Search {
           $fields[] = $f;
         }
       }
-    
+
     if (count($fields)>0) $fieldsClause = implode(', ',$fields);
     else $fieldsClause = '*';
     return $fieldsClause;
@@ -251,7 +257,7 @@ class Search {
     else $whereClause = '1';
     return $whereClause;    
   }
-  
+
 /**
  * get the "GROUP BY" clause of the AS query
  * 
@@ -344,7 +350,7 @@ class Search {
     
     // field id of the joined table 
     $fields[] = $joined['tb_alias'] . '.' . $joined['id'];
-    
+
     // fields of the joined table  
     if (isset($joined['displayed']))
       foreach($joined['displayed'] as $displayed) $fields[] = $joined['tb_alias'] . '.' . $displayed;
@@ -375,7 +381,7 @@ class Search {
       foreach($joined['jfilters'] as $jfilter) {
         $where[] = $this->getFilter($jfilter['tb_alias'],$jfilter);
       }
-    
+
     if (count($where)>0) {
       for ($i=0;$i<count($where);$i++) $where[$i] = '(' . $where[$i] . ')';
       $whl[] = implode(' AND ',$where);
@@ -433,17 +439,17 @@ class Search {
       'like' => " LIKE '%word%'",
       'notlike' => " NOT LIKE '%word%'"
     ); 
-        
+
     if ($advSearch == 'nowords') return $whereForm['notlike'];
     else return $whereForm['like'];
   }
-  
+
   function getWhereOper($advSearch){
     $whereOper = array(
       'or' => " OR ",
       'and' => " AND "
     ); 
-    
+
     if ($advSearch == 'nowords') return $whereOper['and'];
     else return $whereOper['or'];
   }
@@ -453,7 +459,7 @@ class Search {
       'or' => " OR ",
       'and' => " AND "
     ); 
-    
+
     if ($advSearch == 'nowords' || $advSearch == 'allwords') return $whereStringOper['and'];
     else if ($advSearch == 'exactphrase') return '';
     else return $whereStringOper['or'];
@@ -482,7 +488,7 @@ class Search {
     $search = array();
     if ($advSearch == 'exactphrase') $search[] = $searchString;
     else $search = explode(' ',$searchString);    
-    
+
     foreach($search as $searchTerm) $where[]=   preg_replace('/word/', $searchTerm, $whereSubClause);
 
     $whereClause = implode($whereStringOper,$where);  
@@ -708,7 +714,7 @@ class Search {
       if (isset($this->joined)) 
         foreach($this->joined as $joined) $this->asDebug->dbgLog($joined,"Search context joined ".$joined['tb_name']);
     }
-    
+
     return $mainDefined;
   }
 
@@ -869,7 +875,7 @@ class Search {
     if (function_exists($searchFunction)) $list = $searchFunction($swl);
     return $list;
   }
-  
+
 /**
  * initBreadcrumbs : initialize the breadcrumbs variables
  */
@@ -909,10 +915,111 @@ class Search {
   }
 
 /**
+ * Check user params 
+ */
+  function checkParams($cfg,& $msgErr){
+
+    $msgErr = '';
+    
+    // Check minChars parameter
+    if (isset($cfg['minChars'])){
+      if ($cfg['minChars'] < MIN_CHARS) $cfg['minChars'] = MIN_CHARS;
+      $this->cfg['minChars'] = $cfg['minChars'];
+    }
+    // Check extractLength parameter 
+    if (isset($cfg['extractLength'])){
+      if ($cfg['extractLength'] < EXTRACT_MIN) $cfg['extractLength'] = EXTRACT_MIN;
+      if ($cfg['extractLength'] > EXTRACT_MAX) $cfg['extractLength'] = EXTRACT_MAX;
+      $this->cfg['extractLength'] = $cfg['extractLength'];
+    }
+    // Check hideMenu parameter
+    if (isset($cfg['hideMenu'])){
+      if (($cfg['hideMenu'] != 0) && ($cfg['hideMenu'] != 1) && ($cfg['hideMenu'] != 2)) $cfg['hideMenu'] = 2;
+      $this->cfg['hideMenu'] = $cfg['hideMenu'];      
+    }
+    // check the number of extract and the fields to use with
+    if (isset($cfg['hideMenu'])){
+      $extr = explode(':',$cfg['extract']);
+      if (($extr[0] == '') || (!is_numeric($extr[0]))) $extr[0] = 0;         // no extracts
+      if (($extr[1] == '') || (is_numeric($extr[1]))) $extr[1] = 'content';  // default field
+      $this->extractNb = (int) $extr[0];
+      $this->extractFields = explode(',',$extr[1]);
+      $this->cfg['extract'] = $extr[0] . ":" . $extr[1];
+    }
+    // check opacity parameter
+    if (isset($cfg['opacity'])){
+        if ($cfg['opacity'] < 0.) $cfg['opacity'] = 0.;
+        if ($cfg['opacity'] > 1.) $cfg['opacity'] = 1.;
+        $this->cfg['opacity'] = $cfg['opacity'];
+    }     
+      
+    $this->cfg['ajaxSearch'] = $cfg['ajaxSearch'];
+    // check that the tables where to do the search exist
+    if (isset($cfg['whereSearch'])){
+      if ($cfg['whereSearch'] != 'content|tv'){
+        $part = explode('|',$cfg['whereSearch']); // which tables ?
+        foreach($part as $p){
+          $p_array = explode(':',$p);
+          $table = $p_array[0];
+          if (($table != 'content') && ($table != 'tv') && ($table != 'jot') && ($table != 'maxigallery') && !function_exists($table)) {
+            $msgErr = "<br /><h3>Error: table $table not defined in the configuration file: ".$this->cfg['config']." !</h3><br />";
+            return $valid;
+          }
+        }
+      }
+    }
+    
+    // check the list of tvs    
+    if (isset($cfg['withTvs'])){
+      if ($cfg['withTvs'] != ''){
+        $wtv_array = explode(':',$cfg['withTvs']);
+        $wtvSign = $wtv_array[0];
+        if (isset($wtv_array[1])) $wtvList = $wtv_array[1];
+        if (($wtvSign != '+') && ($wtvSign != '-')) {
+          $wtvList = $wtvSign;
+          $wtvSign = '+';
+        }
+        if (!$this->validListTvs($wtvList,$msgErr)) return False;
+        $cfg['withTvs'] = $wtvSign . ':' . $wtvList;
+      }
+      $this->cfg['withTvs'] = $cfg['withTvs'];
+    }
+    // check the table and the tvDisplay function
+    if (isset($cfg['tvPhx'])){
+      if ($cfg['tvPhx']){
+        $tvphx_array = explode(':',$cfg['tvPhx']);
+        $tvphx_table = $tvphx_array[0];
+        if (isset($tvphx_array[1])) $tvphx_func = $tphx_array[1];      
+        if (!function_exists($tvphx_func)) {
+          $msgErr = "<br /><h3>Error: the function $tvphx_func is not defined in the configuration file: ".$this->cfg['config']." !</h3><br />";
+          return false;
+        }
+      }
+      $this->cfg['tvPhx'] = $cfg['tvPhx'];
+    }
+
+    return true;
+  }
+
+/**
+ * updateConfig : update configuration
+ */
+  function updateConfig($newcfg){
+  
+    foreach($newcfg as $key => $value) $this->cfg[$key] = $value; //overwriting of previous values
+    // Re-initialize id group if needed
+    if (isset($newcfg['parents']) || isset($newcfg['documents'])) {
+      $this->cfg['idType'] =  isset($newcfg['documents']) ? "documents" : "parents";
+      $listIDs = ($this->cfg['idType'] == "parents") ? $newcfg['parents'] : $newcfg['documents'];
+      $this->cfg['listIDs'] = $this->cleanIDs($listIDs);
+    }
+  }    
+
+/**
  * initTvPhx : initialize tvPhx variables
  */
   function initTvPhx(){
-
+  
     if ($this->cfg['tvPhx']){
       $tvs = explode(',',$this->cfg['tvPhx']);
       foreach($tvs as $tv) {
@@ -923,6 +1030,7 @@ class Search {
       }
     }
   }
+
 /**
  * initExtractVariables : Initialize the Extract variables
  */
@@ -1452,6 +1560,12 @@ class Search {
     // set Phx for displayed fields of the main table
     foreach($this->main['displayed'] as $field) $this->setPhxField($field,$row,'string');
 
+    // set Phx for "id" field from joined tables.
+    if (isset($this->joined)) foreach($this->joined as $joined){
+      $f = $joined['tb_alias'] . '_' . $id;
+      $this->setPhxField($f,$row,'string');
+    }
+    
     // set Phx for displayed fields from joined tables.
     if (isset($this->joined)) foreach($this->joined as $joined){
       foreach($joined['displayed'] as $field) {
@@ -1504,12 +1618,17 @@ class Search {
  */
   function setDebug(){
     $dbg = (int) $this->cfg['debug'];
-    if ($dbg > 0 && $dbg < 5) {
+    if (abs($dbg) > 0 && abs($dbg) < 4) {
       if (!class_exists('AjaxSearchDebug')) include_once AS_PATH . "classes/ajaxSearchDebug.class.inc.php";
       $this->dbg = $dbg;
       $this->asDebug = new AjaxSearchDebug($this->cfg['version'],$dbg);
     }
-    else $this->dbg = 0; 
+    else {
+      $this->dbg = 0;
+    }
+    // set levels
+    $this->dbgTpl = (abs($this->dbg) > 1);  // log templates
+    $this->dbgRes = (abs($this->dbg) > 2);  // log results
     
     return;
   }
@@ -1535,7 +1654,7 @@ class Search {
     $fh = fopen($configFile, 'r');
     $output = fread($fh, filesize($configFile));
     fclose($fh);
-    return $output;
+    return "\n" . $output;
   }
 }
 //
