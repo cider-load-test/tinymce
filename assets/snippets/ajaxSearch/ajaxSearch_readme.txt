@@ -11,11 +11,12 @@ AjaxSearch Readme version 1.8.1
         1.8.1
 
   Created by:
+      Coroico - (coroico@wangba.fr)
 	    Jason Coward (opengeek - jason@opengeek.com)
 	    Kyle Jaebker (kylej - kjaebker@muddydogpaws.com)
 	    Ryan Thrash  (rthrash - ryan@vertexworks.com)
 
-  Parts refactored and new features/fixes added by Coroico (coroico@wangba.fr)
+  
   
 ----------------------------------------------------------------
 :: Credits
@@ -52,12 +53,13 @@ This is done automatically with the addJscript parameter unless you set it to 0.
 ----------------------------------------------------------------
 
   02-oct-08 (1.8.1)
-    -- mysql query redesigned
+    -- subSearch added. 
+    -- mysql query redesigned.
     -- whereSearch parameter improved. Fields definition added
     -- withTvs parameter added. specify the search in Tvs
     -- # metacharacter for filter
     -- improvement of the searchword list parameter
-    -- first step of debug
+    -- debug - file and firebug console
     -- bug fixing
   21 -July-08 (1.8.0)
     -- define where to do the search (&whereSearch parameter)
@@ -189,6 +191,12 @@ This is done automatically with the addJscript parameter unless you set it to 0.
         - nowords : provides the documents which do not contain the words
         - oneword : provides the document which contain at least one word [default] 
 
+    &subSearch : [int, int | 5, 1]
+        subSearch allow to use radio buttons to select sub-domains where to search
+        Initialize the subSearch by defining the number of possible choices (radio-buttons)
+        and choose the default checked selection
+        By default 5 choices and the first one selected
+        
     &whereSearch : [comma separated list of key | content,tv] (optional)
         define in wich tables the search occurs
         by default in documents and TVs
