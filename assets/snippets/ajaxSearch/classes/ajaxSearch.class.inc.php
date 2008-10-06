@@ -268,10 +268,10 @@ class AjaxSearch extends Search{
 
     $msgErr = '';
     
-    if (isset($_POST['subSearch']) || isset($_GET['subSearch'])) {
+    if (isset($_POST['subSearch']) || isset($_GET['subsearch'])) {
       // catch the new parameters from config file and overwrite pre-existing parameters
       if (isset($_POST['subSearch'])) $this->subSearch = $_POST['subSearch']; 
-      else $this->subSearch = urldecode($_GET['subSearch']);
+      else $this->subSearch = urldecode($_GET['subsearch']);
       // subsearch function name and radio button index
       $sbsch_array = explode(',',$this->subSearch);
       $this->subSearchName = $sbsch_array[0];
@@ -288,7 +288,6 @@ class AjaxSearch extends Search{
         $this->updateConfig($newcfg);
       }
     }
-    else $this->subSearch = '';
 
     //check subSearch definition parameter (from snippet call)
     if (isset($this->cfg['subSearch'])){
@@ -506,7 +505,8 @@ EOD;
 
     $sbsch_array = explode(',',$this->cfg['subSearch']);
     $this->subSearchNb = $sbsch_array[0];
-    if (!isset($this->subSearchSel)){ // init choice selection if not already done
+    if (!isset($this->subSearch)){ 
+      // init choice selection from snippet call rather than POST or GET variable
       if (isset($sbsch_array[1])) $this->subSearchSel = $sbsch_array[1];
       else $this->subSearchSel = 1;    
     }
@@ -541,8 +541,8 @@ EOD;
           $varLink['tpl'] = 'pagingLinksCurrent';
         } else {
           $varLink['tpl'] = 'pagingLinks';
-          $varLink['pagingLink'] = $modx->makeUrl($modx->documentIdentifier,'','AS_offset='.$nrp.'&AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch));
-
+          if (!isset($this->subSearch)) $varLink['pagingLink'] = $modx->makeUrl($modx->documentIdentifier,'','AS_offset='.$nrp.'&AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch));
+          else $varLink['pagingLink'] = $modx->makeUrl($modx->documentIdentifier,'','AS_offset='.$nrp.'&AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch).'&amp;subsearch='.urlencode($this->subSearch));
         }
         $varLink['pagingSeparator'] = ($nrp + $grabMax < $nbrs) ? $pageLinkSeparator : '' ;          
         $varLink['pagingText'] = $resultPageLinkNumber;

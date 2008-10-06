@@ -348,7 +348,7 @@ class AjaxSearchPopup extends Search{
       $this->varResults['moreResults'] = 1;
       $this->varResults['moreClass'] = 'AS_ajax_more';
       if ($this->cfg['subSearch'] != '')
-        $this->varResults['moreLink'] = 'index.php?id='.$this->cfg['moreResultsPage'].'&amp;AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch).'&amp;subSearch='.urlencode($this->cfg['subSearch']);
+        $this->varResults['moreLink'] = 'index.php?id='.$this->cfg['moreResultsPage'].'&amp;AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch).'&amp;subsearch='.urlencode($this->cfg['subSearch']);
       else 
         $this->varResults['moreLink'] = 'index.php?id='.$this->cfg['moreResultsPage'].'&amp;AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch);
       $this->varResults['moreTitle'] = $this->_lang['as_moreResultsTitle'];
