@@ -984,12 +984,13 @@ class Search {
       }
       $this->cfg['withTvs'] = $cfg['withTvs'];
     }
+    
     // check the table and the tvDisplay function
     if (isset($cfg['tvPhx'])){
       if ($cfg['tvPhx']){
         $tvphx_array = explode(':',$cfg['tvPhx']);
         $tvphx_table = $tvphx_array[0];
-        if (isset($tvphx_array[1])) $tvphx_func = $tphx_array[1];      
+        if (isset($tvphx_array[1])) $tvphx_func = $tvphx_array[1];      
         if (!function_exists($tvphx_func)) {
           $msgErr = "<br /><h3>Error: the function $tvphx_func is not defined in the configuration file: ".$this->cfg['config']." !</h3><br />";
           return false;
