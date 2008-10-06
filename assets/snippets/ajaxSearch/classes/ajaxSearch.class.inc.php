@@ -377,7 +377,7 @@ class AjaxSearch extends Search{
 
     if ($this->cfg['clearDefault'] || $this->cfg['ajaxSearch']) {
       //Adding the javascript libraries & variables to the header
-      if ($this->cfg['jScript'] == 'jquery') {
+      if ($this->cfg['jscript'] == 'jquery') {
         if ($this->cfg['addJscript']) $modx->regClientStartupScript($this->cfg['jsJquery']);
         $jsInclude = AS_SPATH.'js/ajaxSearch-jquery.js';
       }
@@ -385,6 +385,8 @@ class AjaxSearch extends Search{
         if ($this->cfg['addJscript']) $modx->regClientStartupScript($this->cfg['jsMootools']);
         $jsInclude = AS_SPATH.'js/ajaxSearch.js';
       }
+    }
+    if ($this->cfg['ajaxSearch']) {
       $modx->regClientStartupScript($jsInclude);
 
       $jsVars =<<<EOD
