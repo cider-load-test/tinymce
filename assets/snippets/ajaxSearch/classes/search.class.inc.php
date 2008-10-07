@@ -1169,7 +1169,8 @@ class Search {
 
       // build the final extract
       for($i=0;$i<$nbExtr;$i++) {
-        $finalExtract .= $extracts[$i]['etcLeft'] . $mbSubstr($text,$extracts[$i]['left'],$extracts[$i]['right'] - $extracts[$i]['left']+1) . $extracts[$i]['etcRight'] . $this->cfg['extractSeparator'];    
+        $separation = ($extracts[$i]['etcRight'] != '') ? $this->cfg['extractSeparator'] : ''; // to avoid breaking sentences
+        $finalExtract .= $extracts[$i]['etcLeft'] . $mbSubstr($text,$extracts[$i]['left'],$extracts[$i]['right'] - $extracts[$i]['left']+1) . $extracts[$i]['etcRight'] . $separation;    
       }
       $finalExtract = $mbSubstr($finalExtract,0,$mbStrlen($finalExtract)-$mbStrlen($this->cfg['extractSeparator']));
 
