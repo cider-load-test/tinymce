@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3 (rev 4239 - October 3, 2008)
 ===================================
+* [#MODX-415] Update German manager file
 * [FS#1011] Minor CSS change to color of Unread Message links
 * [#MODX-365] Fix some hardcoded language strings in the Access Permissions pages
 * [#MODX-389] Convert TV Input Options field to be a textarea
