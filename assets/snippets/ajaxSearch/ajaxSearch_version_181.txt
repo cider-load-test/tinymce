@@ -319,3 +319,11 @@ http://svn.modxcms.com/jira/browse/ADDON-21
 ADDON-22 : Fix for Japanese language
 http://svn.modxcms.com/jira/browse/ADDON-22
 
+AJAXSEARCH-5 : Some extracts are cut in middle of sentence without reasons
+http://svn.modxcms.com/jira/browse/AJAXSEARCH-5
+
+AJAXSEARCH-7 : JS Cross Site scripting - security issue
+http://svn.modxcms.com/jira/browse/AJAXSEARCH-7
+
+AJAXSEARCH-8 : pageLinkSeparator not visible
+http://svn.modxcms.com/jira/browse/AJAXSEARCH-8

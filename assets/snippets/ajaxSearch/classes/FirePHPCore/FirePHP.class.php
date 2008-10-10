@@ -1,6 +1,6 @@
 <?php
-
-/* ***** BEGIN LICENSE BLOCK *****
+/**
+ * *** BEGIN LICENSE BLOCK *****
  *  
  * This file is part of FirePHP (http://www.firephp.org/).
  * 
@@ -34,8 +34,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
- * ***** END LICENSE BLOCK ***** */
- 
+ * ***** END LICENSE BLOCK *****
+ * 
+ * @copyright   Copyright (C) 2007-2008 Christoph Dorn
+ * @author      Christoph Dorn <christoph@christophdorn.com>
+ * @license     http://www.opensource.org/licenses/bsd-license.php
+ * @package     FirePHP
+ */
  
  
 /**
@@ -43,32 +48,122 @@
  * The data can be displayed in the Firebug Console or in the
  * "Server" request tab.
  * 
- * For more informtion see: http://www.firephp.org/
+ * For more information see: http://www.firephp.org/
  * 
  * @copyright   Copyright (C) 2007-2008 Christoph Dorn
  * @author      Christoph Dorn <christoph@christophdorn.com>
  * @license     http://www.opensource.org/licenses/bsd-license.php
+ * @package     FirePHP
  */
-
 class FirePHP {
   
-  const VERSION = '0.2.b.1';
+  /**
+   * FirePHP version
+   *
+   * @var string
+   */
+  const VERSION = '0.2.b.2';
   
+  /**
+   * Firebug LOG level
+   *
+   * Logs a message to firebug console.
+   * 
+   * @var string
+   */
   const LOG = 'LOG';
+  
+  /**
+   * Firebug INFO level
+   *
+   * Logs a message to firebug console and displays an info icon before the message.
+   * 
+   * @var string
+   */
   const INFO = 'INFO';
+  
+  /**
+   * Firebug WARN level
+   *
+   * Logs a message to firebug console, displays an warning icon before the message and colors the line turquoise.
+   * 
+   * @var string
+   */
   const WARN = 'WARN';
+  
+  /**
+   * Firebug ERROR level
+   *
+   * Logs a message to firebug console, displays an error icon before the message and colors the line yellow. Also increments the firebug error count.
+   * 
+   * @var string
+   */
   const ERROR = 'ERROR';
+  
+  /**
+   * Dumps a variable to firebug's server panel
+   *
+   * @var string
+   */
   const DUMP = 'DUMP';
+  
+  /**
+   * Displays a stack trace in firebug console
+   *
+   * @var string
+   */
   const TRACE = 'TRACE';
+  
+  /**
+   * Displays an exception in firebug console
+   * 
+   * Increments the firebug error count.
+   *
+   * @var string
+   */
   const EXCEPTION = 'EXCEPTION';
+  
+  /**
+   * Displays an table in firebug console
+   *
+   * @var string
+   */
   const TABLE = 'TABLE';
+  
+  /**
+   * Starts a group in firebug console
+   * 
+   * @var string
+   */
   const GROUP_START = 'GROUP_START';
+  
+  /**
+   * Ends a group in firebug console
+   * 
+   * @var string
+   */
   const GROUP_END = 'GROUP_END';
   
+  /**
+   * Singleton instance of FirePHP
+   *
+   * @var FirePHP
+   */
   protected static $instance = null;
   
+  /**
+   * Wildfire protocol message index
+   *
+   * @var int
+   */
   protected $messageIndex = 1;
   
+  /**
+   * Gets singleton instance of FirePHP
+   *
+   * @param boolean $AutoCreate
+   * @return FirePHP
+   */
   public static function getInstance($AutoCreate=false) {
     if($AutoCreate===true && !self::$instance) {
       self::init();
@@ -76,11 +171,20 @@ class FirePHP {
     return self::$instance;
   }
    
+  /**
+   * Creates FirePHP object and stores it for singleton access
+   *
+   * @return FirePHP
+   */
   public static function init() {
     return self::$instance = new self();
   } 
   
-  
+  /**
+   * Register FirePHP as your error handler
+   * 
+   * Will throw exceptions for each php error.
+   */
   public function registerErrorHandler()
   {
     //NOTE: The following errors will not be caught by this error handler:
@@ -91,6 +195,17 @@ class FirePHP {
     set_error_handler(array($this,'errorHandler'));     
   }
 
+  /**
+   * FirePHP's error handler
+   * 
+   * Throws exception for each php error that will occur.
+   *
+   * @param int $errno
+   * @param string $errstr
+   * @param string $errfile
+   * @param int $errline
+   * @param array $errcontext
+   */
   public function errorHandler($errno, $errstr, $errfile, $errline, $errcontext)
   {
     // Don't throw exception if error reporting is switched off
@@ -103,56 +218,162 @@ class FirePHP {
     }
   }
   
+  /**
+   * Register FirePHP as your exception handler
+   */
   public function registerExceptionHandler()
   {
     set_exception_handler(array($this,'exceptionHandler'));     
   }
   
+  /**
+   * FirePHP's exception handler
+   * 
+   * Logs all exceptions to your firebug console and then stops the script.
+   *
+   * @param Exception $Exception
+   * @throws Exception
+   */
   function exceptionHandler($Exception) {
     $this->fb($Exception);
   }
   
-  
-    
+  /**
+   * Set custom processor url for FirePHP
+   *
+   * @param string $URL
+   */    
   public function setProcessorUrl($URL)
   {
     $this->setHeader('X-FirePHP-ProcessorURL', $URL);
   }
 
+  /**
+   * Set custom renderer url for FirePHP
+   *
+   * @param string $URL
+   */
   public function setRendererUrl($URL)
   {
     $this->setHeader('X-FirePHP-RendererURL', $URL);
   }
   
-  
+  /**
+   * Start a group for following messages
+   *
+   * @param string $Name
+   * @return true
+   * @throws Exception
+   */
   public function group($Name) {
     return $this->fb(null, $Name, FirePHP::GROUP_START);
   }
   
+  /**
+   * Ends a group you have started before
+   *
+   * @return true
+   * @throws Exception
+   */
   public function groupEnd() {
     return $this->fb(null, null, FirePHP::GROUP_END);
   }
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::LOG
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public function log($Object, $Label=null) {
     return $this->fb($Object, $Label, FirePHP::LOG);
   } 
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::INFO
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public function info($Object, $Label=null) {
     return $this->fb($Object, $Label, FirePHP::INFO);
   } 
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::WARN
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public function warn($Object, $Label=null) {
     return $this->fb($Object, $Label, FirePHP::WARN);
   } 
 
+  /**
+   * Log object with label to firebug console
+   *
+   * @see FirePHP::ERROR
+   * @param mixes $Object
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
   public function error($Object, $Label=null) {
     return $this->fb($Object, $Label, FirePHP::ERROR);
   } 
 
+  /**
+   * Dumps key and variable to firebug server panel
+   *
+   * @see FirePHP::DUMP
+   * @param string $Key
+   * @param mixed $Variable
+   * @return true
+   * @throws Exception
+   */
   public function dump($Key, $Variable) {
     return $this->fb($Variable, $Key, FirePHP::DUMP);
-  } 
+  }
   
+  /**
+   * Log a trace in the firebug console
+   *
+   * @see FirePHP::TRACE
+   * @param string $Label
+   * @return true
+   * @throws Exception
+   */
+  public function trace($Label) {
+    return $this->fb($Label, FirePHP::TRACE);
+  } 
+
+  /**
+   * Log a table in the firebug console
+   *
+   * @see FirePHP::TABLE
+   * @param string $Label
+   * @param string $Table
+   * @return true
+   * @throws Exception
+   */
+  public function table($Label, $Table) {
+    return $this->fb($Table, $Label, FirePHP::TABLE);
+  }
+  
+  /**
+   * Check if FirePHP is installed on client
+   *
+   * @return boolean
+   */
   public function detectClientExtension() {
     /* Check if FirePHP is installed on client */
     if(!@preg_match_all('/\sFirePHP\/([\.|\d]*)\s?/si',$this->getUserAgent(),$m) ||
@@ -162,6 +383,14 @@ class FirePHP {
     return true;    
   }
  
+  /**
+   * Log object to firebug
+   * 
+   * @see http://www.firephp.org/Wiki/Reference/Fb
+   * @param mixed $Object
+   * @return true
+   * @throws Exception
+   */
   public function fb($Object) {
   
     if (headers_sent($filename, $linenum)) {
@@ -249,14 +478,24 @@ class FirePHP {
       $trace = debug_backtrace();
       if(!$trace) return false;
       for( $i=0 ; $i<sizeof($trace) ; $i++ ) {
-        
+
+        if(isset($trace[$i]['class'])
+           && isset($trace[$i]['file'])
+           && ($trace[$i]['class']=='FirePHP'
+               || $trace[$i]['class']=='FB')
+           && (substr($this->_standardizePath($trace[$i]['file']),-18,18)=='FirePHPCore/fb.php'
+               || substr($this->_standardizePath($trace[$i]['file']),-29,29)=='FirePHPCore/FirePHP.class.php')) {
+          /* Skip - FB::trace(), FB::send(), $firephp->trace(), $firephp->fb() */
+        } else
         if(isset($trace[$i]['class'])
            && isset($trace[$i+1]['file'])
            && $trace[$i]['class']=='FirePHP'
            && substr($this->_standardizePath($trace[$i+1]['file']),-18,18)=='FirePHPCore/fb.php') {
-          /* Skip */
+          /* Skip fb() */
         } else
-        if($trace[$i]['function']=='fb') {
+        if($trace[$i]['function']=='fb'
+           || $trace[$i]['function']=='trace'
+           || $trace[$i]['function']=='send') {
           $Object = array('Class'=>isset($trace[$i]['class'])?$trace[$i]['class']:'',
                           'Type'=>isset($trace[$i]['type'])?$trace[$i]['type']:'',
                           'Function'=>isset($trace[$i]['function'])?$trace[$i]['function']:'',
@@ -316,10 +555,22 @@ class FirePHP {
     return true;
   }
   
+  /**
+   * Standardizes path for windows systems.
+   *
+   * @param string $Path
+   * @return string
+   */
   protected function _standardizePath($Path) {
     return preg_replace('/\\\\+/','/',$Path);    
   }
   
+  /**
+   * Escape trace path for windows systems
+   *
+   * @param array $Trace
+   * @return array
+   */
   protected function _escapeTrace($Trace) {
     if(!$Trace) return $Trace;
     for( $i=0 ; $i<sizeof($Trace) ; $i++ ) {
@@ -330,6 +581,12 @@ class FirePHP {
     return $Trace;    
   }
   
+  /**
+   * Escape file information of trace for windows systems
+   *
+   * @param string $File
+   * @return string
+   */
   protected function _escapeTraceFile($File) {
     /* Check if we have a windows filepath */
     if(strpos($File,'\\')) {
@@ -342,15 +599,32 @@ class FirePHP {
     return $File;
   }
 
+  /**
+   * Send header
+   *
+   * @param string $Name
+   * @param string_type $Value
+   */
   protected function setHeader($Name, $Value) {
     return header($Name.': '.$Value);
   }
 
+  /**
+   * Get user agent
+   *
+   * @return string|false
+   */
   protected function getUserAgent() {
     if(!isset($_SERVER['HTTP_USER_AGENT'])) return false;
     return $_SERVER['HTTP_USER_AGENT'];
   }
 
+  /**
+   * Returns a new exception
+   *
+   * @param string $Message
+   * @return Exception
+   */
   protected function newException($Message) {
     return new Exception($Message);
   }
@@ -657,7 +931,7 @@ class FirePHP {
               return '[' . join(',', $elements) . ']';
 
           case 'object':
-              $vars = get_object_vars($var);
+              $vars = $this->json_get_object_vars($var);
 
               $this->json_objectStack[] = $var;
 
@@ -672,15 +946,103 @@ class FirePHP {
                       return $property;
                   }
               }
-
-              return '{'.$this->json_encode('__className') . ':' . $this->json_encode(get_class($var)) .
-                     (($properties)?',':'') .
-                     join(',', $properties) . '}';
+                     
+              return '{' . join(',', $properties) . '}';
 
           default:
               return null;
       }
   }
+  
+  /**
+   * Obtains all object member values including ones with
+   * protected and private visibility
+   * 
+   * @param Object $variable
+   * @return array All members of the object
+   */
+  private function json_get_object_vars($variable)
+  {
+    // This is required until everyone is running PHP 5.3 at which
+    // point the Reflection API can provide private and protected
+    // object member values.
+    $code = var_export($variable, true);
+    
+    if(preg_match_all('/[\s>=]?(\S*?)::__set_state\(/si',$code,$m)) {
+      for( $i=0; $i < count($m[0]); $i++ ) {
+        $code = preg_replace('/'.preg_quote($m[0][$i],'/').'/',
+                                'FirePHP::json_generate_object_member_array(\''.$m[1][$i].'\',',
+                                $code);
+    	}
+    }
+
+    eval('$dump = ' . $code . ';');
+    
+    return $dump;
+  }
+
+  /**
+   * Generates an array of object members and includes hints about visibility
+   * 
+   * @param string $class The class of the object
+   * @param array $members All object members
+   * @return array All object members with class and visibility hints added
+   */
+  private static function json_generate_object_member_array($class, $members)
+  {    
+    $reflection_class = new ReflectionClass($class);  
+    
+    $props = array();
+    foreach( $reflection_class->getProperties() as $property) {
+      $props[$property->getName()] = $property;
+    }
+  
+    $dump = array('__className'=>$class);
+
+    foreach( $props as $raw_name => $property ) {
+
+      $name = $raw_name;
+      if($property->isStatic()) {
+        $name = 'static:'.$name;
+      }
+
+      if($property->isPublic()) {
+        $name = 'public:'.$name;
+      } else
+      if($property->isPrivate()) {
+        $name = 'private:'.$name;
+      } else
+      if($property->isProtected()) {
+        $name = 'protected:'.$name;
+      }
+      
+      if($members[$raw_name]) {
+        $dump[$name] = $members[$raw_name];      
+      } else {
+
+        if(method_exists($property,'setAccessible')) {
+          $property->setAccessible(true);
+
+          $dump[$name] = $property->getValue();
+        } else
+        if($property->isPublic()) {
+          $dump[$name] = $property->getValue();
+        } else {
+          $dump[$name] = 'Need PHP 5.3 to get value!';
+        }
+      }
+    }    
+    
+    foreach( $members as $name => $value ) {
+      // Include all members that are not defined in the class
+      // but exist in the object
+      if(!$props[$name]) {
+        $name = 'undeclared:'.$name;
+        $dump[$name] = $value;
+      }
+    }
+    return $dump;
+  }  
 
  /**
   * array-walking function for use in generating JSON-formatted name-value pairs

@@ -1717,7 +1717,8 @@ function stripTags($text){
  *  stripHtml : Remove HTML sensitive tags
  */
 function stripHtml($text){
-  return strip_tags($text);
+  // prevent js XSS and remove HTML tags
+  return htmlspecialchars(strip_tags($text), ENT_QUOTES);
 }
 
 /**

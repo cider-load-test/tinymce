@@ -374,8 +374,11 @@ class AjaxSearch extends Search{
   function setAjaxSearchHeader(){
 
     global $modx;
-
-    if ($this->cfg['clearDefault'] || $this->cfg['ajaxSearch']) {
+      
+    // add the clearDefault js library if needed
+    if ($this->cfg['clearDefault']) $modx->regClientStartupScript($this->cfg['jsClearDefault']);
+    
+    if ($this->cfg['ajaxSearch']) {
       //Adding the javascript libraries & variables to the header
       if ($this->cfg['jscript'] == 'jquery') {
         if ($this->cfg['addJscript']) $modx->regClientStartupScript($this->cfg['jsJquery']);
@@ -385,8 +388,6 @@ class AjaxSearch extends Search{
         if ($this->cfg['addJscript']) $modx->regClientStartupScript($this->cfg['jsMootools']);
         $jsInclude = AS_SPATH.'js/ajaxSearch.js';
       }
-    }
-    if ($this->cfg['ajaxSearch']) {
       $modx->regClientStartupScript($jsInclude);
 
       $jsVars =<<<EOD
@@ -546,9 +547,9 @@ EOD;
           if (!isset($this->subSearch)) $varLink['pagingLink'] = $modx->makeUrl($modx->documentIdentifier,'','AS_offset='.$nrp.'&AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch));
           else $varLink['pagingLink'] = $modx->makeUrl($modx->documentIdentifier,'','AS_offset='.$nrp.'&AS_search='.urlencode($this->searchString).'&amp;advsearch='.urlencode($this->advSearch).'&amp;subsearch='.urlencode($this->subSearch));
         }
-        $varLink['pagingSeparator'] = ($nrp + $grabMax < $nbrs) ? $pageLinkSeparator : '' ;          
+        $varLink['pagingSeparator'] = ($nrp + $grabMax < $nbrs) ? $this->cfg['pageLinkSeparator'] : '' ;          
         $varLink['pagingText'] = $resultPageLinkNumber;
-
+if ($this->dbg) $this->asDebug->dbgLog($varLink['pagingSeparator'],"pagingSeparator");   // user parameters
         $resultPageLinkNumber++;
 
         // parse the template and output the paging link
