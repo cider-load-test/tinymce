@@ -273,28 +273,14 @@ $cfg['breadcrumbs'] = isset($breadcrumbs) ? $breadcrumbs : (isset($__breadcrumbs
 // tvPhx could also be used with custom tables (see examples on www.modx.wangba.fr)
 $cfg['tvPhx'] = isset($tvPhx) ? $tvPhx : (isset($__tvPhx) ? $__tvPhx : 0);
 
-//------------------------------------------------------------------------------
-// Configure - JavaScript setup options
-//------------------------------------------------------------------------------
-
-// &jScript ['jquery'|'mootools']
-// Set this to jquery if you would like use the jquery library
-// Default: mootools
-$cfg['jscript'] = isset($jscript ) ? $jscript : (isset($__jscript ) ? $__jscript : 'mootools');
-
-// &jsMootools - Location of the mootools javascript library
-$cfg['jsMooTools'] = 'manager/media/script/mootools/mootools.js';
-    
-// &jsQuery - Location of the jquery javascript library
-$cfg['jsJquery'] = AS_SPATH . 'js/jQuery/jquery.js';
-    
 // &jsClearDefault - Clearing default text
 // Set this to 1 if you would like to include the clear default js function
 // add the class "cleardefault" to your input text form and set this parameter
 $cfg['clearDefault'] = isset($clearDefault) ? $clearDefault : (isset($__clearDefault) ? $__clearDefault : 0);
 
-// &jsClearDefault - Location of the clearDefault js library (depending of jscript)
-$cfg['jsClearDefault'] = ($cfg['jscript'] == 'mootools') ? AS_SPATH.'js/clearDefault.js' : AS_SPATH.'js/clearDefault-jQuery.js';
+// &jsSearchInput - Location of the js library
+// mandatory to protect the site against JS cross scripting attacks
+$cfg['jsClearDefault'] = AS_SPATH . 'js/clearDefault.js';
 
 
 //------------------------------------------------------------------------------
@@ -321,16 +307,27 @@ if ($cfg['ajaxSearch']){  // ajax mode
     // &opacity - set the opacity of the div ajaxSearch_output 
     $cfg['opacity'] = isset($opacity) ? $opacity : (isset($__opacity) ? $__opacity : 1.);
     
-    // &addJscript [1 | 0]
-    // Set this to 1 if you would like to include or not the mootool/jquery library
-    // in the header of your pages automatically.
-    $cfg['addJscript'] = isset($addJscript ) ? $addJscript : (isset($__addJscript ) ? $__addJscript : 1);
-    
     // &tplAjaxResults - Chunk to style the ajax output results outer
     $cfg['tplAjaxResults'] = isset($tplAjaxResults) ? $tplAjaxResults : (isset($__tplAjaxResults) ? $__tplAjaxResults : '');
     
     // &tplAjaxResult - Chunk to style each output result
     $cfg['tplAjaxResult'] = isset($tplAjaxResult) ? $tplAjaxResult : (isset($__tplAjaxResult) ? $__tplAjaxResult : '');
+
+    // &jScript ['jquery'|'mootools']
+    // Set this to jquery if you would like use the jquery library
+    // Default: mootools
+    $cfg['jscript'] = isset($jscript ) ? $jscript : (isset($__jscript ) ? $__jscript : 'mootools');
+    
+    // &addJscript [1 | 0]
+    // Set this to 1 if you would like to include or not the mootool/jquery library
+    // in the header of your pages automatically.
+    $cfg['addJscript'] = isset($addJscript ) ? $addJscript : (isset($__addJscript ) ? $__addJscript : 1);
+    
+    // &jsMootools - Location of the mootools javascript library
+    $cfg['jsMooTools'] = 'manager/media/script/mootools/mootools.js';
+        
+    // &jsQuery - Location of the jquery javascript library
+    $cfg['jsJquery'] = AS_SPATH . 'js/jQuery/jquery.js';
 }
 
 include_once AS_PATH."classes/ajaxSearch.class.inc.php";
