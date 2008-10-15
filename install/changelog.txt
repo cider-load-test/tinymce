@@ -2,10 +2,11 @@
 This file shows the changes in recent releases of MODx. The most current release is usually the 
 development release, and is only shown to give an idea of what's currently in the pipeline.
 
-MODx 0.9.6.3 (rev 4325 - October 15, 2008)
+MODx 0.9.6.3 (rev 4326 - October 15, 2008)
 ===================================
 * [#MODX-429] Change yourdomain.com to example.com in default settings
 * [#MODX-405] Fix problem in media browser generated XML when PHP short tags is being used
+* [#MODX-438] Ensure that access permissions are inherited from parent when changing template on new document
 
 MODx 0.9.6.3-RC1 (rev 4291 - October 12, 2008)
 ===================================
