@@ -81,6 +81,7 @@ class udperms{
 			}
 		}*/
 
+
 		// get document groups for current user
 		if($_SESSION['mgrDocgroups']) {
 			$docgrp = implode(" || dg.document_group = ",$_SESSION['mgrDocgroups']);
@@ -102,7 +103,7 @@ class udperms{
 				LEFT JOIN $tbldg dg on dg.document = sc.id
 				LEFT JOIN $tbldgn dgn ON dgn.id = dg.document_group
 				WHERE sc.id = $document 
-				AND (dg.document_group = $docgrp || sc.privatemgr = 0)";
+				AND (". ( (!$docgrp) ? null : "dg.document_group = ".$docgrp." ||" ) . " sc.privatemgr = 0)";
 				   
 		$rs = mysql_query($sql);
 		$limit = mysql_num_rows($rs);
