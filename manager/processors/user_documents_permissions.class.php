@@ -98,7 +98,7 @@ class udperms{
 		$tblsc = $dbase.".`".$table_prefix."site_content`";
 		$tbldg = $dbase.".`".$table_prefix."document_groups`";
 		$tbldgn = $dbase.".`".$table_prefix."documentgroup_names`";
-                $sql = "SELECT DISTINCT sc.id 
+		$sql = "SELECT DISTINCT sc.id 
 				FROM $tblsc sc 
 				LEFT JOIN $tbldg dg on dg.document = sc.id
 				LEFT JOIN $tbldgn dgn ON dgn.id = dg.document_group
