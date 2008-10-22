@@ -3,7 +3,7 @@ $installMode = intval($_POST['installmode']);
 if ($installMode == 0) {
   $_POST['database_connection_charset'] = substr($_POST['database_collation'], 0, strpos($_POST['database_collation'], '_'));
 }
-elseif ($installMode == 1) {
+elseif ($installMode > 0) {
   include "../manager/includes/config.inc.php";
 
   if (!isset ($database_connection_charset) || empty($database_connection_charset)) {

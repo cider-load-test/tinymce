@@ -4,6 +4,7 @@ development release, and is only shown to give an idea of what's currently in th
 
 MODx 0.9.6.3-RC2 (rev 4361 - October 22, 2008)
 ===================================
+* [#MODX-346] Fixed error with $database_connection_charset being empty after "Advanced Upgrade Install".
 * [#MODX-453] Weblogin calls to mail should set envelope sender address when safe_mode is not enabled.
 * [#TINYMCE-1] Japanese language file provided by MEGU
 * [#MODX-450] bug fix to prevent invalid SQL syntax / error
