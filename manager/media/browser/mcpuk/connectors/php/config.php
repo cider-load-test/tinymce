@@ -88,11 +88,18 @@ $fckphp_config['prot'].=((isset($_SERVER['HTTPS'])&&$_SERVER['HTTPS']=='on')?"s"
 $fckphp_config['prot'].="://";
 /*==============================================================================*/
 
-$basedir = $base_path.$rb_base_dir;
-if($_GET['editor'] == 'fckeditor2' && $strip_image_paths == 1){
-	$baseurl = $base_url.$rb_base_url;
-}else{
-	$baseurl = $site_url.$rb_base_url;
+$basedir = $rb_base_dir;
+$baseurl = $rb_base_url;
+$rb_base_url_parse = parse_url($rb_base_url);
+if(empty($rb_base_url_parse['host'])){
+    $base_url_parse = parse_url($base_url);
+    $rb_base_url = str_replace($base_url_parse['path'], "", $rb_base_url);
+    $rb_base_url = (substr($rb_base_url, 0, 1) == "/" ? substr($rb_base_url, 1) : $rb_base_url);  
+    if($_GET['editor'] == 'fckeditor2' && $strip_image_paths == 1){
+    	$baseurl = $base_url.$rb_base_url;     
+    } else {
+    	$baseurl = $site_url.$rb_base_url;        
+    }
 }
 
 /*------------------------------------------------------------------------------*/
